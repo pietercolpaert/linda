@@ -12,3 +12,8 @@
 */
 
 Route::get('/', 'Tdt\Dapps\Controllers\HomeController@index');
+
+//Route::group(array('before' => 'auth'), function() {
+
+    Route::resource('dataset', 'Tdt\Dapps\Controllers\DatasetController');
+//});
