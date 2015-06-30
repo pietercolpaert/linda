@@ -1,9 +1,11 @@
 <?php namespace Tdt\Dapps\Repositories;
 
+use \ML\JsonLD\JsonLD;
+
 class DatasetRepository
 {
     /**
-     * Get all of the datasets
+     * Get all of the datasets in the form of EasyRdf_Resource's
      *
      * @param integer $limit  The limit of the amount of returned datasets
      * @param integer $offset The offset of the applied limit
@@ -12,19 +14,72 @@ class DatasetRepository
      */
     public function getAll($limit, $offset)
     {
+        $collection = $this->getMongoCollection();
 
+        $cursor = $collection->find([]);
+
+        $results = [];
+
+        foreach ($cursor as $element) {
+
+            unset($element['_id']);
+
+            $expand = JsonLD::expand(json_encode($element));
+
+            $element = (array)$expand;
+            $graph = new \EasyRdf_Graph();
+
+            $json_ld = json_encode($element);
+
+            $graph->parse($json_ld, 'jsonld');
+
+            $results[] = $graph;
+        }
+
+        return $results;
     }
 
     /**
      * Get a certain dataset
      *
-     * @param string $title The title of the dataset
+     * @param string $id The id of the dataset
      *
      * @return EasyRdf_Resource
      */
-    public function get($title)
+    public function get($id)
     {
+        $uri = $this->getUri() . '/' . $id;
 
+        $collection = $this->getMongoCollection();
+
+        $cursor = $collection->find(
+            [
+                '@graph' => ['$elemMatch' => [
+                        '@id' => $uri
+                    ]
+                ]
+            ]
+        );
+
+        if ($cursor->hasNext()) {
+
+            $jsonLd = $cursor->getNext();
+            unset($jsonLd['_id']);
+
+            $expand = JsonLD::expand(json_encode($jsonLd));
+
+            $jsonLd = (array)$expand;
+            $graph = new \EasyRdf_Graph();
+
+            $json_ld = json_encode($jsonLd);
+
+            $graph->parse($json_ld, 'jsonld');
+
+            return $graph;
+
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -32,10 +87,185 @@ class DatasetRepository
      *
      * @param array $config The config of the new dataset
      *
-     * @return string (title)
+     * @return void
      */
     public function add($config)
     {
+        // Create a auto-generated subject URI
+        $id = $this->getIncrementalId();
+
+        $uri = $this->getUri() . '/' . $id;
+
+        $context = $this->getContext();
+
+        // Add the dataset resource
+
+        $graph = new \EasyRdf_Graph();
+        $dataset = $graph->resource($uri);
+        $dataset->addType('dcat:Dataset');
+
+        foreach ($this->getFields() as $field) {
+            if ($field['domain'] == 'dcat:Dataset') {
+                if (in_array($field['type'], ['string', 'text'])) {
+                    $graph->addLiteral($dataset, $field['sem_term'], $config[$field['var_name']]);
+                }
+            }
+        }
+
+        $serializer = new \EasyRdf_Serialiser_JsonLd();
+
+        $jsonld = $serializer->serialise($graph, 'jsonld');
+
+        $compact_document = (array)JsonLD::compact($jsonld, $context);
+
+        // Add the datarecord resource
+
+        $datarecord = $graph->resource($uri . '#record');
+        $datarecord->addType('dcat:CatalogRecord');
+
+        $created = time();
+
+        $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
+        $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
+        $datarecord->addLiteral('http://purl.org/dc/terms/creator', $config['user']);
+
+        foreach ($this->getFields() as $field) {
+            if ($field['domain'] == 'dcat:CatalogRecord') {
+                if (in_array($field['type'], ['string', 'text'])) {
+                    $graph->addLiteral($datarecord, $field['sem_term'], $config[$field['var_name']]);
+                }
+            }
+        }
+
+        // Add the distribution resource
+        $distribution = $graph->resource($uri . '#distribution');
+        $distribution->addType('dcat:Distribution');
+
+        foreach ($this->getFields() as $field) {
+            if ($field['domain'] == 'dcat:Distribution') {
+                if (in_array($field['type'], ['string', 'text'])) {
+                    $graph->addLiteral($distribution, $field['sem_term'], $config[$field['var_name']]);
+                }
+            }
+        }
+
+        $serializer = new \EasyRdf_Serialiser_JsonLd();
+
+        $jsonld = $serializer->serialise($graph, 'jsonld');
+
+        $compact_document = (array)JsonLD::compact($jsonld, $context);
+
+        $collection = $this->getMongoCollection();
+        $collection->insert($compact_document);
+    }
+
+    /**
+     * Update a dataset
+     *
+     * @param $id     integer The id of the dataset
+     * @param $config array   The configuration that makes up the dataset
+     *
+     * @return void
+     */
+    public function update($id, $config)
+    {
+        $uri = $this->getUri() . '/' . $id;
+
+        // Find the graph in the collection
+        $graph = $this->get($id);
+
+        $context = $this->getContext();
+
+        if (empty($graph)) {
+            return null;
+        }
+
+        // Add the contributor
+        $graph->addLiteral($uri . '#record', 'http://purl.org/dc/terms/contributor', $config['user']);
+
+        foreach ($this->getFields() as $field) {
+
+            $type = $field['domain'];
+
+            if ($type == 'dcat:Dataset') {
+                $resource = $graph->resource($uri);
+            } else {
+                $resource = $graph->resource($uri . '#record');
+            }
+
+            if ($field['single_value']) {
+                $graph->delete($resource, $field['short_sem_term']);
+            }
+
+            if (in_array($field['type'], ['string', 'text'])) {
+                $graph->addLiteral($resource, $field['sem_term'], $config[$field['var_name']]);
+            }
+        }
+
+        // Delete the json entry and replace it with the updated one
+        $collection = $this->getMongoCollection();
+
+        $serializer = new \EasyRdf_Serialiser_JsonLd();
+
+        $jsonld = $serializer->serialise($graph, 'jsonld');
+
+        \Log::info($jsonld);
+        \Log::info(json_encode($config));
+
+        $compact_document = (array)JsonLD::compact($jsonld, $context);
+
+        $collection->remove([
+            '@graph' => [
+                '$elemMatch' => [
+                    '@id' => $uri
+                ]
+            ]
+        ]);
+
+        $collection->insert($compact_document);
+    }
+
+    private function getIncrementalId()
+    {
+        $result = \DB::table('incrementor')->select('*')->first();
+
+        if (empty($result)) {
+            $id = 1;
+        } else {
+            $id = $result->incremental_id;
+        }
+
+        $incrementedId = $id + 1;
+
+        \DB::table('incrementor')->where('incremental_id', $id)->delete();
+
+        \DB::table('incrementor')->insert(['incremental_id' => $incrementedId]);
+
+        \Log::info('id is ' . $incrementedId);
+
+        return $id;
+    }
+
+    private function getMongoCollection()
+    {
+        $connString = 'mongodb://' . \Config::get('database.connections.mongodb.host') . ':' . \Config::get('database.connections.mongodb.port');
+
+        $client = new \MongoClient($connString);
+
+        $mongoCollection = $client->selectCollection(\Config::get('database.connections.mongodb.database'), 'datasets');
+
+        return $mongoCollection;
+    }
+
+    private function getUri()
+    {
+        $protocol = 'http';
+
+        if (!empty($_SERVER['HTTPS'])) {
+            $protocol = 'https';
+        }
+
+        return $protocol . '://' . $_SERVER['HTTP_HOST'];
 
     }
 
@@ -44,89 +274,128 @@ class DatasetRepository
      *
      * @return array
      */
-    public function getValidator()
+    public function getRules()
     {
         return [
             'title' => 'required'
         ];
     }
 
+    /**
+     * Create and return the semantic context
+     *
+     * @return mixed
+     */
+    private function getContext()
+    {
+        $ns = \Prefix::all();
+
+        $context = new \stdClass();
+        $namespaces = new \stdClass();
+
+        $context_keyword = '@context';
+
+        foreach ($ns as $namespace) {
+            $namespaces->$namespace['prefix'] = $namespace['uri'];
+        }
+
+        $context->$context_keyword = $namespaces;
+
+        return $context;
+    }
+
     public function getFields()
     {
         return [
-            'title' => [
-                'sem_uri' => 'http://purl.org/dc/terms/',
+            [
+                'var_name' => 'title',
+                'sem_term' => 'http://purl.org/dc/terms/title',
+                'short_sem_term' => 'dc:title',
                 'type' => 'string',
                 'view_name' => 'Title',
                 'required' => true,
                 'description' => 'The title of the dataset, will act as the unique name of the dataset.',
-                'domain' => 'dcat:Dataset'
+                'domain' => 'dcat:Dataset',
+                'single_value' => true,
             ],
-            'description' => [
-                'sem_uri' => 'http://purl.org/dc/terms/',
+            [
+                'var_name' => 'description',
+                'sem_term' => 'http://purl.org/dc/terms/description',
+                'short_sem_term' => 'dc:description',
                 'required' => true,
                 'type' => 'string',
                 'view_name' => 'Description',
                 'description' => 'The description of the dataset.',
-                'domain' => 'dcat:Dataset'
+                'domain' => 'dcat:Dataset',
+                'single_value' => true,
             ],
-            'comment' => [
-                'sem_uri' => 'http://purl.org/dc/terms/',
+            [
+                'var_name' => 'comment',
+                'sem_term' => 'http://purl.org/dc/terms/comment',
+                'short_sem_term' => 'dc:comment',
                 'required' => false,
                 'type' => 'text',
                 'view_name' => 'Comment',
                 'description' => 'Additional comments on the dataset.',
-                'domain' => 'dcat:Dataset'
+                'domain' => 'dcat:Dataset',
+                'single_value' => true,
             ],
-            'score' => [
-                'sem_uri' => 'http://ns1.org/',
+            [
+                'var_name' => 'score',
+                'sem_term' => 'http://linda.mmlab.iminds.be/score',
+                'short_sem_term' => 'linda:score',
                 'required' => false,
                 'type' => 'enumeration',
                 'values' => 'red|orange|green',
                 'view_name' => 'Score',
                 'description' => 'The score of a dataset.',
-                'domain' => 'dcat:Dataset'
+                'domain' => 'dcat:Dataset',
+                'single_value' => true,
             ],
-            'recommendation' => [
-                'sem_uri' => 'http://ns1.org/',
+            [
+                'var_name' => 'recommendation',
+                'sem_term' => 'http://linda.mmlab.iminds.be/recommendation',
+                'short_sem_term' => 'linda:recommendation',
                 'required' => false,
                 'type' => 'text',
                 'view_name' => 'Recommendation',
                 'description' => 'Small recommendations made by the researchers to make the dataset better.',
-                'domain' => 'dcat:Dataset'
+                'domain' => 'dcat:Dataset',
+                'single_value' => true,
             ],
-            'rights' => [
-                'sem_uri' => 'http://purl.org/dc/terms/',
+            [
+                'var_name' => 'rights',
+                'sem_term' => 'http://purl.org/dc/terms/rights',
+                'short_sem_term' => 'dc:rights',
                 'required' => false,
                 'type' => 'list',
                 'values' => 'https://github.com/tdt/licenses.json',
                 'view_name' => 'Rights',
                 'description' => 'The link to the license that rests on the dataset.',
-                'domain' => 'dcat:Distribution'
+                'domain' => 'dcat:Distribution',
+                'single_value' => true,
             ],
-            'useFor' => [
-                'sem_uri' => 'http://ns1.org/',
+            [
+                'var_name' => 'useFor',
+                'sem_term' => 'http://linda.mmlab.iminds.be/useFor',
+                'short_sem_term' => 'linda:useFor',
                 'required' => false,
                 'type' => 'string',
                 'view_name' => 'Usage',
                 'description' => 'Links to certain applicable domains',
-                'domain' => 'dcat:Distribution'
+                'domain' => 'dcat:Distribution',
+                'single_value' => true,
             ],
-            'creator' => [
-                'sem_uri' => 'http://purl.org/dc/terms/',
+            [
+                'var_name' => 'record_comment',
+                'sem_term' => 'http://purl.org/dc/terms/comment',
+                'short_sem_term' => 'dc:comment',
                 'required' => false,
-                'type' => 'string',
-                'view_name' => 'Creator',
-                'description' => '',
-                'domain' => 'dcat:CatalogRecord'
-            ],
-            'contributor' => [
-                'sem_uri' => 'http://purl.org/dc/terms/',
-                'required' => false,
-                'type' => 'string',
-                'view_name' => 'Contributor',
-                'description' => 'Which researchers contributed to the meta-data of the dataset.',
-                'domain' => 'dcat:CatalogRecord'
+                'type' => 'text',
+                'view_name' => 'Comment',
+                'description' => 'Comment for the data record (e.g. how was this meta-data assembled).',
+                'domain' => 'dcat:CatalogRecord',
+                'single_value' => true,
             ],
         ];
     }

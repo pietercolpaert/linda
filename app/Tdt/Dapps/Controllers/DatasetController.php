@@ -1,12 +1,15 @@
 <?php namespace Tdt\Dapps\Controllers;
 
 use Tdt\Dapps\Repositories\DatasetRepository;
+use Tdt\Dapps\Auth\Auth;
 
 class DatasetController extends \Controller
 {
     public function __construct()
     {
         $this->datasetRepo = new DatasetRepository();
+
+        \EasyRdf_Namespace::set('linda', 'http://linda.mmlab.iminds.be/');
     }
     /**
      * Display a listing of the resource.
@@ -15,7 +18,14 @@ class DatasetController extends \Controller
      */
     public function index()
     {
-        //
+        $limit = \Input::get('limit', 100);
+        $offset = \Input::get('offset', 0);
+
+        $datasets = $this->datasetRepo->getAll($limit, $offset);
+
+        return \View::make('dataset.index')
+                ->with('title', 'List | Dataset')
+                ->with('datasets', $datasets);
     }
 
 
@@ -26,6 +36,8 @@ class DatasetController extends \Controller
      */
     public function create()
     {
+        Auth::requirePermissions('dataset.manage');
+
         return \View::make('dataset.create')
                     ->with('title', 'Add a dataset')
                     ->with(['fields' => $this->datasetRepo->getFields()]);
@@ -39,10 +51,24 @@ class DatasetController extends \Controller
      */
     public function store()
     {
+        Auth::requirePermissions('dataset.manage');
+
         $input = \Input::all();
 
-        // TODO add it to the back-end
-        // Build check if the title is unique or not
+        // Add current user
+        $user = \Sentry::getUser()->toArray();
+        $input['user'] = $user['email'];
+
+        $rules = $this->datasetRepo->getRules();
+
+        $validator = \Validator::make($input, $rules);
+
+        if ($validator->fails()) {
+            $message = $validator->messages()->first();
+            \App::abort(400, $message);
+        }
+
+        $this->datasetRepo->add($input);
     }
 
 
@@ -66,7 +92,31 @@ class DatasetController extends \Controller
      */
     public function edit($id)
     {
-        //
+        Auth::requirePermissions('dataset.manage');
+
+        $id = \Request::segment(2);
+
+        $dataset = $this->datasetRepo->get($id);
+
+        if (empty($dataset)) {
+            \Redirect::to('datasets');
+        }
+
+        $fields = $this->datasetRepo->getFields();
+
+        $protocol = 'http';
+
+        if (!empty($_SERVER['HTTPS'])) {
+            $protocol = 'https';
+        }
+
+        $uri = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $id;
+
+        return \View::make('dataset.edit')
+                ->with('title', 'Edit | Linda')
+                ->with('dataset', $dataset)
+                ->with('fields', $fields)
+                ->with('uri', $uri);
     }
 
 
@@ -78,7 +128,24 @@ class DatasetController extends \Controller
      */
     public function update($id)
     {
-        //
+        Auth::requirePermissions('dataset.manage');
+
+        $input = \Input::all();
+
+        // Add current user
+        $user = \Sentry::getUser()->toArray();
+        $input['user'] = $user['email'];
+
+        $rules = $this->datasetRepo->getRules();
+
+        $validator = \Validator::make($input, $rules);
+
+        if ($validator->fails()) {
+            $message = $validator->messages()->first();
+            \App::abort(400, $message);
+        }
+
+        $this->datasetRepo->update($id, $input);
     }
 
 
@@ -90,6 +157,6 @@ class DatasetController extends \Controller
      */
     public function destroy($id)
     {
-        //
+        Auth::requirePermissions('dataset.manage');
     }
 }

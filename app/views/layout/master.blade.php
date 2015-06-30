@@ -25,9 +25,9 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/">Home</a></li>
-            <li><a href="/dataset">Datasets</a></li>
-            <li><a href="/app">Apps</a></li>
+            <li @if(empty(\Request::segment(1))) class="active" @endif><a href="/">Home</a></li>
+            <li @if(\Request::segment(1) == 'datasets') class="active" @endif><a href="/datasets">Datasets</a></li>
+            <li @if(\Request::segment(1) == 'apps') class="active" @endif><a href="/apps">Apps</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>

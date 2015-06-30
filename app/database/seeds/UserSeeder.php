@@ -43,7 +43,11 @@ class UserSeeder extends Seeder {
         ));
 
         Sentry::getGroupProvider()->create(array(
-            'name'        => 'superadmin'
+            'name'        => 'superadmin',
+            'permissions' => array(
+                'datasets.manage' => 1,
+                'apps.manage' => 1,
+            ),
         ));
 
         // Assign user permissions

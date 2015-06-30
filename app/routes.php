@@ -13,7 +13,8 @@
 
 Route::get('/', 'Tdt\Dapps\Controllers\HomeController@index');
 
-//Route::group(array('before' => 'auth'), function() {
+Route::resource('datasets', 'Tdt\Dapps\Controllers\DatasetController');
+Route::get('login', 'Tdt\Dapps\Controllers\AuthController@getLogin');
+Route::post('login', 'Tdt\Dapps\Controllers\AuthController@postLogin');
+Route::get('logout', 'Tdt\Dapps\Controllers\AuthController@getLogout');
 
-    Route::resource('dataset', 'Tdt\Dapps\Controllers\DatasetController');
-//});

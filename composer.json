@@ -7,7 +7,8 @@
 	"require": {
 		"laravel/framework": "4.2.*",
 		"cartalyst/sentry": "2.1.*",
-		"easyrdf/easyrdf": "^0.9.1"
+		"easyrdf/easyrdf": "^0.9.1",
+		"ml/json-ld": "^1.0"
 	},
 	"autoload": {
 		"classmap": [

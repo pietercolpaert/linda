@@ -8,6 +8,6 @@ class HomeController extends \Controller
     {
         $datasetRepo = new DatasetRepository();
 
-        return json_encode($datasetRepo->getAll());
+        return \View::make('layout.home')->with('title', 'Linda');
     }
 }
