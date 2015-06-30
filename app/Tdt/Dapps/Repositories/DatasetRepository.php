@@ -48,7 +48,7 @@ class DatasetRepository
      */
     public function get($id)
     {
-        $uri = $this->getUri() . '/' . $id;
+        $uri = \URL::to('/' . $id);
 
         $collection = $this->getMongoCollection();
 
@@ -94,7 +94,7 @@ class DatasetRepository
         // Create a auto-generated subject URI
         $id = $this->getIncrementalId();
 
-        $uri = $this->getUri() . '/' . $id;
+        $uri = \URL::to('/' . $id);
 
         $context = $this->getContext();
 
@@ -169,7 +169,7 @@ class DatasetRepository
      */
     public function update($id, $config)
     {
-        $uri = $this->getUri() . '/' . $id;
+        $uri = \URL::to('/' . $id);
 
         // Find the graph in the collection
         $graph = $this->get($id);
@@ -237,10 +237,7 @@ class DatasetRepository
         $incrementedId = $id + 1;
 
         \DB::table('incrementor')->where('incremental_id', $id)->delete();
-
         \DB::table('incrementor')->insert(['incremental_id' => $incrementedId]);
-
-        \Log::info('id is ' . $incrementedId);
 
         return $id;
     }
@@ -254,18 +251,6 @@ class DatasetRepository
         $mongoCollection = $client->selectCollection(\Config::get('database.connections.mongodb.database'), 'datasets');
 
         return $mongoCollection;
-    }
-
-    private function getUri()
-    {
-        $protocol = 'http';
-
-        if (!empty($_SERVER['HTTPS'])) {
-            $protocol = 'https';
-        }
-
-        return $protocol . '://' . $_SERVER['HTTP_HOST'];
-
     }
 
     /**

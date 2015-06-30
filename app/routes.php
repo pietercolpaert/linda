@@ -18,3 +18,5 @@ Route::get('login', 'Tdt\Dapps\Controllers\AuthController@getLogin');
 Route::post('login', 'Tdt\Dapps\Controllers\AuthController@postLogin');
 Route::get('logout', 'Tdt\Dapps\Controllers\AuthController@getLogout');
 
+Route::get('{id}', 'Tdt\Dapps\Controllers\DerefController@index')
+->where('id', '[0-9]+');

@@ -6,6 +6,9 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         {{ HTML::script('js/main.js') }}
+         <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+        {{ HTML::script('js/rdf2html.js') }}
+
 
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +16,7 @@
 
         <link href='//fonts.googleapis.com/css?family=Varela+Round|Open+Sans:400,300,600' rel='stylesheet' type='text/css'>
         {{ HTML::style('css/main.css') }}
+        <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
     </head>
 
     <body>

@@ -129,13 +129,7 @@ class DatasetController extends \Controller
             $adjusted_fields[] = $field;
         }
 
-        $protocol = 'http';
-
-        if (!empty($_SERVER['HTTPS'])) {
-            $protocol = 'https';
-        }
-
-        $uri = $protocol . '://' . $_SERVER['HTTP_HOST'] . '/' . $id;
+        $uri = \URL::to('/' . $id);
 
         return \View::make('dataset.edit')
                 ->with('title', 'Edit | Linda')
