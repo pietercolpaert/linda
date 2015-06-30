@@ -28,24 +28,24 @@
                 </div>
             </div>
             <div class="form-group">
-            @foreach ($fields as $config)
-                @if ($config['required'] && $config['domain'] == 'dcat:Dataset')
+            @foreach ($fields as $field)
+                @if ($field['required'] && $field['domain'] == 'dcat:Dataset')
 
-                <label for="input_{{ $config['var_name'] }}" class="col-sm-3 control-label">
-                        {{ $config['view_name'] }}
+                <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
+                        {{ $field['view_name'] }}
                 </label>
                 <div class="col-sm-9">
-                    @if($config['type'] == 'string')
-                    <input type="text" class="form-control" id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}" placeholder="" @if(isset($config['default_value'])) value='{{ $config['default_value'] }}' @endif>
-                    @elseif($config['type'] == 'text')
-                    <textarea class="form-control" rows=10 id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}"> @if (isset($config['default_value'])) {{ $config['default_value'] }}@endif</textarea>
-                    @elseif($config['type'] == 'integer')
-                    <input type="number" class="form-control" id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}" placeholder="" @if(isset($config['default_value'])) value='{{ $config['default_value'] }}' @endif>
-                    @elseif($config['type'] == 'boolean')
-                    <input type='checkbox' class="form-control" id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}" checked='checked'/>
+                    @if($field['type'] == 'string')
+                    <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    @elseif($field['type'] == 'text')
+                    <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
+                    @elseif($field['type'] == 'integer')
+                    <input type="number" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    @elseif($field['type'] == 'boolean')
+                    <input type='checkbox' class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" checked='checked'/>
                     @endif
                     <div class='help-block'>
-                        {{ $config['description'] }}
+                        {{ $field['description'] }}
                     </div>
                 </div>
                 @endif
@@ -60,20 +60,20 @@
                 </div>
             </div>
             <div class="form-group">
-            @foreach ($fields as $config)
-                @if (!$config['required'] && $config['domain'] == 'dcat:Dataset')
+            @foreach ($fields as $field)
+                @if (!$field['required'] && $field['domain'] == 'dcat:Dataset')
 
-                <label for="input_{{ $config['var_name'] }}" class="col-sm-3 control-label">
-                        {{ $config['view_name'] }}
+                <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
+                        {{ $field['view_name'] }}
                 </label>
                 <div class="col-sm-9">
-                    @if($config['type'] == 'string')
-                    <input type="text" class="form-control" id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}" placeholder="" @if(isset($config['default_value'])) value='{{ $config['default_value'] }}' @endif>
-                    @elseif($config['type'] == 'text')
-                    <textarea class="form-control" rows=10 id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}"> @if (isset($config['default_value'])) {{ $config['default_value'] }}@endif</textarea>
+                    @if($field['type'] == 'string')
+                    <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    @elseif($field['type'] == 'text')
+                    <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
                     @endif
                     <div class='help-block'>
-                        {{ $config['description'] }}
+                        {{ $field['description'] }}
                     </div>
                 </div>
                 @endif
@@ -91,24 +91,31 @@
                 </div>
             </div>
             <div class="form-group">
-            @foreach ($fields as $config)
-                @if (!$config['required'] && $config['domain'] != 'dcat:Dataset')
+            @foreach ($fields as $field)
+                @if (!$field['required'] && $field['domain'] != 'dcat:Dataset')
 
-                <label for="input_{{ $config['var_name'] }}" class="col-sm-3 control-label">
-                        {{ $config['view_name'] }}
+                <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
+                        {{ $field['view_name'] }}
                 </label>
                 <div class="col-sm-9">
-                    @if($config['type'] == 'string')
-                    <input type="text" class="form-control" id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}" placeholder="" @if(isset($config['default_value'])) value='{{ $config['default_value'] }}' @endif>
-                    @elseif($config['type'] == 'text')
-                    <textarea class="form-control" rows=10 id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}"> @if (isset($config['default_value'])) {{ $config['default_value'] }}@endif</textarea>
-                    @elseif($config['type'] == 'integer')
-                    <input type="number" class="form-control" id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}" placeholder="" @if(isset($config['default_value'])) value='{{ $config['default_value'] }}' @endif>
-                    @elseif($config['type'] == 'boolean')
-                    <input type='checkbox' class="form-control" id="input_{{ $config['var_name'] }}" name="{{ $config['var_name'] }}" checked='checked'/>
+                    @if($field['type'] == 'string')
+                    <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    @elseif($field['type'] == 'text')
+                    <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
+                    @elseif($field['type'] == 'integer')
+                    <input type="number" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    @elseif($field['type'] == 'boolean')
+                    <input type='checkbox' class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" checked='checked'/>
+                    @elseif($field['type'] == 'list')
+                    <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
+                        @foreach($field['data'] as $option)
+                        <?php $option = (array)$option; ?>
+                        <option value="{{ $option[$field['value_name']] }}">{{ $option[$field['key_name']] }}</option>
+                        @endforeach
+                    </select>
                     @endif
                     <div class='help-block'>
-                        {{ $config['description'] }}
+                        {{ $field['description'] }}
                     </div>
                 </div>
                 @endif

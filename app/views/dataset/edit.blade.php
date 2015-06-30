@@ -44,7 +44,7 @@
 
                         @elseif($field['type'] == 'text')
                         <?php $val = $datasetGraph->getLiteral($field['short_sem_term'])->getValue(); ?>
-                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}"> @if (isset($val)) {{ $val }}@endif</textarea>
+                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @endif
                         <div class='help-block'>
                             {{ $field['description'] }}
@@ -92,7 +92,7 @@
                         }
 
                         ?>
-                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}"> @if (isset($val)) {{ $val }}@endif</textarea>
+                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @endif
                         <div class='help-block'>
                             {{ $field['description'] }}
@@ -148,7 +148,7 @@
                         }
 
                         ?>
-                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}"> @if (isset($val)) {{ $val }}@endif</textarea>
+                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @endif
                         <div class='help-block'>
                             {{ $field['description'] }}
@@ -167,34 +167,37 @@
                     @foreach ($fields as $field)
                     @if (!$field['required'] && $field['domain'] == 'dcat:Distribution')
 
+                    <?php
+                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
+                        $val = $literal;
+
+                        if (!empty($literal)) {
+                            $val = $literal->getValue();
+                        }
+
+                    ?>
+
                     <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
                         {{ $field['view_name'] }}
                     </label>
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
-                        <?php
-                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
-                        $val = $literal;
-
-                        if (!empty($literal)) {
-                            $val = $literal->getValue();
-                        }
-
-                        ?>
                         <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
-
                         @elseif($field['type'] == 'text')
-                        <?php
-                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
-                        $val = $literal;
+                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
+                        @elseif($field['type'] == 'list')
+                        <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
+                        @foreach($field['data'] as $option)
 
-                        if (!empty($literal)) {
-                            $val = $literal->getValue();
-                        }
-
-                        ?>
-                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}"> @if (isset($val)) {{ $val }}@endif</textarea>
+                            <?php $option = (array)$option; ?>
+                            @if ($option[$field['value_name']] == $val)
+                                <option value="{{ $option[$field['value_name']] }}" selected>{{ $option[$field['key_name']] }}</option>
+                            @else
+                                <option value="{{ $option[$field['value_name']] }}">{{ $option[$field['key_name']] }}</option>
+                            @endif
+                            @endforeach
+                        </select>
                         @endif
                         <div class='help-block'>
                             {{ $field['description'] }}

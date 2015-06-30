@@ -38,9 +38,23 @@ class DatasetController extends \Controller
     {
         Auth::requirePermissions('dataset.manage');
 
+        $fields = $this->datasetRepo->getFields();
+
+        $adjusted_fields = [];
+
+        // Expand values in the fields list such as external lists
+        foreach ($fields as $field) {
+            if ($field['type'] == 'list') {
+                $data = json_decode($this->getDocument($field['values']));
+                $field['data'] = $data;
+            }
+
+            $adjusted_fields[] = $field;
+        }
+
         return \View::make('dataset.create')
                     ->with('title', 'Add a dataset')
-                    ->with(['fields' => $this->datasetRepo->getFields()]);
+                    ->with(['fields' => $adjusted_fields]);
     }
 
 
@@ -103,6 +117,17 @@ class DatasetController extends \Controller
         }
 
         $fields = $this->datasetRepo->getFields();
+        $adjusted_fields = [];
+
+        // Expand values in the fields list such as external lists
+        foreach ($fields as $field) {
+            if ($field['type'] == 'list') {
+                $data = json_decode($this->getDocument($field['values']));
+                $field['data'] = $data;
+            }
+
+            $adjusted_fields[] = $field;
+        }
 
         $protocol = 'http';
 
@@ -115,7 +140,7 @@ class DatasetController extends \Controller
         return \View::make('dataset.edit')
                 ->with('title', 'Edit | Linda')
                 ->with('dataset', $dataset)
-                ->with('fields', $fields)
+                ->with('fields', $adjusted_fields)
                 ->with('uri', $uri);
     }
 
@@ -148,7 +173,6 @@ class DatasetController extends \Controller
         $this->datasetRepo->update($id, $input);
     }
 
-
     /**
      * Remove the specified resource from storage.
      *
@@ -158,5 +182,20 @@ class DatasetController extends \Controller
     public function destroy($id)
     {
         Auth::requirePermissions('dataset.manage');
+    }
+
+    private function getDocument($uri)
+    {
+        // Create a CURL client
+        $cURL = new \Buzz\Client\Curl();
+        $cURL->setVerifyPeer(false);
+        $cURL->setTimeout(30);
+
+        // Get discovery document
+        $browser = new \Buzz\Browser($cURL);
+        $response = $browser->get(\URL::to($uri));
+
+        // Document content
+        return $response->getContent();
     }
 }

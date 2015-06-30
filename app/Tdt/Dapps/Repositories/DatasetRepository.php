@@ -132,7 +132,7 @@ class DatasetRepository
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
                 if (in_array($field['type'], ['string', 'text'])) {
-                    $graph->addLiteral($datarecord, $field['sem_term'], $config[$field['var_name']]);
+                    $graph->addLiteral($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
                 }
             }
         }
@@ -143,8 +143,8 @@ class DatasetRepository
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:Distribution') {
-                if (in_array($field['type'], ['string', 'text'])) {
-                    $graph->addLiteral($distribution, $field['sem_term'], $config[$field['var_name']]);
+                if (in_array($field['type'], ['string', 'text', 'list'])) {
+                    $graph->addLiteral($distribution, $field['sem_term'], trim($config[$field['var_name']]));
                 }
             }
         }
@@ -189,16 +189,18 @@ class DatasetRepository
 
             if ($type == 'dcat:Dataset') {
                 $resource = $graph->resource($uri);
-            } else {
+            } else if ($type == 'dcat:CatalogRecord') {
                 $resource = $graph->resource($uri . '#record');
+            } else if ($type == 'dcat:Distribution') {
+                $resource = $graph->resource($uri . '#distribution');
             }
 
             if ($field['single_value']) {
                 $graph->delete($resource, $field['short_sem_term']);
             }
 
-            if (in_array($field['type'], ['string', 'text'])) {
-                $graph->addLiteral($resource, $field['sem_term'], $config[$field['var_name']]);
+            if (in_array($field['type'], ['string', 'text', 'list'])) {
+                $graph->addLiteral($resource, $field['sem_term'], trim($config[$field['var_name']]));
             }
         }
 
@@ -208,9 +210,6 @@ class DatasetRepository
         $serializer = new \EasyRdf_Serialiser_JsonLd();
 
         $jsonld = $serializer->serialise($graph, 'jsonld');
-
-        \Log::info($jsonld);
-        \Log::info(json_encode($config));
 
         $compact_document = (array)JsonLD::compact($jsonld, $context);
 
@@ -369,7 +368,9 @@ class DatasetRepository
                 'short_sem_term' => 'dc:rights',
                 'required' => false,
                 'type' => 'list',
-                'values' => 'https://github.com/tdt/licenses.json',
+                'values' => 'https://raw.githubusercontent.com/openknowledgebe/be-data-licenses/master/licenses.json',
+                'key_name' => 'title',
+                'value_name' => 'url',
                 'view_name' => 'Rights',
                 'description' => 'The link to the license that rests on the dataset.',
                 'domain' => 'dcat:Distribution',
