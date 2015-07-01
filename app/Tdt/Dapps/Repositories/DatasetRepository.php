@@ -294,6 +294,30 @@ class DatasetRepository
         return $context;
     }
 
+    /**
+     * Delete an entry
+     *
+     * @param integer $id The id of the dataset
+     *
+     * return void
+     */
+    public function delete($id)
+    {
+        $collection = $this->getMongoCollection();
+
+        $uri = \URL::to('/' . $id);
+
+        \Log::info("deleting " . $uri);
+
+        $collection->remove([
+            '@graph' => [
+                '$elemMatch' => [
+                    '@id' => $uri
+                ]
+            ]
+        ]);
+    }
+
     public function getFields()
     {
         return [

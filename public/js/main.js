@@ -1,5 +1,41 @@
 $('document').ready(function(){
 
+    // Make sure the delete is not a slip of the mouse
+    $('.delete').on('click', function(e){
+
+        e.preventDefault();
+
+        var baseURL = document.location.origin;
+
+        // Get the id
+        var path = $(this).attr('href').split('/');
+        var id = path[path.length-1];
+
+        if(window.confirm('Are you sure you want to delete this?')) {
+            $.ajax({
+                url: baseURL + '/datasets/' + id,
+                method: 'DELETE',
+                headers: {
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+                //'Authorization': authHeader
+            },
+            success: function(e){
+                // Done, redirect to datets page
+                window.location = baseURL + '/datasets';
+            },
+            error: function(e){
+                window.location = baseURL + '/datasets';
+            }
+
+            });
+        } else {
+            e.preventDefault();
+
+            window.location = baseURL + '/datasets';
+        }
+    });
+
     $('.btn-add-dataset').on('click', function(e){
 
         e.preventDefault();
@@ -26,7 +62,6 @@ $('document').ready(function(){
             }
         });
 
-        console.log(data);
         var baseURL = document.location.origin;
 
         // Ajax call
@@ -90,7 +125,6 @@ $('document').ready(function(){
             }
         });
 
-        console.log(data);
         var baseURL = document.location.origin;
 
         // Ajax call

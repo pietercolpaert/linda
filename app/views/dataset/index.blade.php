@@ -42,11 +42,11 @@
                                 <div class='btn-group'>
                                     @if(Tdt\Dapps\Auth\Auth::hasAccess('datasets.manage'))
                                         <a href='{{ URL::to('datasets/' . $id .'/edit') }}' class='btn' title='Edit the dataset'>
-                                            <i class='fa fa-eye'></i> Edit
+                                            <i class='fa fa-pencil-square-o'></i> Edit
                                         </a>
                                     @endif
                                     @if(Tdt\Dapps\Auth\Auth::hasAccess('datasets.manage'))
-                                        <a href='{{ URL::to('datasets/' . $id . '/delete') }}' class='btn delete' title='Delete this dataset'>
+                                        <a href='{{ URL::to('datasets/' . $id) }}' class='btn delete' title='Delete this dataset'>
                                             <i class='fa fa-times icon-only'></i>
                                         </a>
                                     @endif
@@ -59,8 +59,5 @@
         @endforeach
 
         <br/>
-        <a href='#' class='introjs pull-right'>
-             <i class='fa fa-lg fa-question-circle'></i>
-        </a>
     </div>
 @stop

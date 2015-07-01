@@ -176,6 +176,8 @@ class DatasetController extends \Controller
     public function destroy($id)
     {
         Auth::requirePermissions('dataset.manage');
+
+        $this->datasetRepo->delete($id);
     }
 
     private function getDocument($uri)
