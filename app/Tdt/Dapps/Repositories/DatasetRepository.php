@@ -101,7 +101,7 @@ class DatasetRepository
         // Add the dataset resource
 
         $graph = new \EasyRdf_Graph();
-        $dataset = $graph->resource($uri);
+        $dataset = $graph->resource($uri . '#dataset');
         $dataset->addType('dcat:Dataset');
 
         foreach ($this->getFields() as $field) {
@@ -120,7 +120,7 @@ class DatasetRepository
 
         // Add the datarecord resource
 
-        $datarecord = $graph->resource($uri . '#record');
+        $datarecord = $graph->resource($uri);
         $datarecord->addType('dcat:CatalogRecord');
 
         $created = time();
@@ -137,6 +137,9 @@ class DatasetRepository
             }
         }
 
+        // Add the relationship with the dataset
+        $graph->addResource($datarecord, 'http://xmlns.com/foaf/spec/primaryTopic', $uri . '#dataset');
+
         // Add the distribution resource
         $distribution = $graph->resource($uri . '#distribution');
         $distribution->addType('dcat:Distribution');
@@ -148,6 +151,9 @@ class DatasetRepository
                 }
             }
         }
+
+        // Add the distribution to the dataset
+        $graph->addResource($dataset, 'dcat:distribution', $uri . '#distribution');
 
         $serializer = new \EasyRdf_Serialiser_JsonLd();
 
