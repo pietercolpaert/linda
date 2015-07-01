@@ -1,7 +1,7 @@
-<?php namespace Tdt\Dapps\Controllers;
+<?php namespace Tdt\Linda\Controllers;
 
-use Tdt\Dapps\Repositories\DatasetRepository;
-use Tdt\Dapps\Auth\Auth;
+use Tdt\Linda\Repositories\DatasetRepository;
+use Tdt\Linda\Auth\Auth;
 
 class DatasetController extends \Controller
 {

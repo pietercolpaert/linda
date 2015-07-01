@@ -1,6 +1,6 @@
-<?php namespace Tdt\Dapps\Controllers;
+<?php namespace Tdt\Linda\Controllers;
 
-use Tdt\Dapps\Repositories\DatasetRepository;
+use Tdt\Linda\Repositories\DatasetRepository;
 
 class HomeController extends \Controller
 {

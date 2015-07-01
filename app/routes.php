@@ -11,12 +11,12 @@
 |
 */
 
-Route::get('/', 'Tdt\Dapps\Controllers\HomeController@index');
+Route::get('/', 'Tdt\Linda\Controllers\HomeController@index');
 
-Route::resource('datasets', 'Tdt\Dapps\Controllers\DatasetController');
-Route::get('login', 'Tdt\Dapps\Controllers\AuthController@getLogin');
-Route::post('login', 'Tdt\Dapps\Controllers\AuthController@postLogin');
-Route::get('logout', 'Tdt\Dapps\Controllers\AuthController@getLogout');
+Route::resource('datasets', 'Tdt\Linda\Controllers\DatasetController');
+Route::get('login', 'Tdt\Linda\Controllers\AuthController@getLogin');
+Route::post('login', 'Tdt\Linda\Controllers\AuthController@postLogin');
+Route::get('logout', 'Tdt\Linda\Controllers\AuthController@getLogout');
 
-Route::get('{id}', 'Tdt\Dapps\Controllers\DerefController@index')
+Route::get('{id}', 'Tdt\Linda\Controllers\DerefController@index')
 ->where('id', '[0-9]+');

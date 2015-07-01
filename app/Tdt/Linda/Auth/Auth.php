@@ -1,6 +1,4 @@
-<?php
-
-namespace Tdt\Dapps\Auth;
+<?php namespace Tdt\Linda\Auth;
 
 /**
  * Auth Controller

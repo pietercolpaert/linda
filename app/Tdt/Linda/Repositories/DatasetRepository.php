@@ -1,4 +1,4 @@
-<?php namespace Tdt\Dapps\Repositories;
+<?php namespace Tdt\Linda\Repositories;
 
 use \ML\JsonLD\JsonLD;
 

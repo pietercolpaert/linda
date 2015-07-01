@@ -1,4 +1,4 @@
-<?php namespace Tdt\Dapps\Controllers;
+<?php namespace Tdt\Linda\Controllers;
 
 /**
  *

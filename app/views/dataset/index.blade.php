@@ -6,7 +6,7 @@
         <div class="col-sm-7">
             <h3>Manage your datasets</h3>
         </div>
-        @if (Tdt\Dapps\Auth\Auth::hasAccess('datasets.manage'))
+        @if (Tdt\Linda\Auth\Auth::hasAccess('datasets.manage'))
         <div class="col-sm-5 text-right">
             <a href='{{ URL::to('datasets/create') }}' class='btn btn-primary margin-left'
                 <i class='fa fa-plus'></i> Add
@@ -42,12 +42,12 @@
                             </div>
                             <div class='col-sm-4 text-right'>
                                 <div class='btn-group'>
-                                    @if(Tdt\Dapps\Auth\Auth::hasAccess('datasets.manage'))
+                                    @if(Tdt\Linda\Auth\Auth::hasAccess('datasets.manage'))
                                         <a href='{{ URL::to('datasets/' . $id .'/edit') }}' class='btn' title='Edit the dataset'>
                                             <i class='fa fa-pencil-square-o'></i> Edit
                                         </a>
                                     @endif
-                                    @if(Tdt\Dapps\Auth\Auth::hasAccess('datasets.manage'))
+                                    @if(Tdt\Linda\Auth\Auth::hasAccess('datasets.manage'))
                                         <a href='{{ URL::to('datasets/' . $id) }}' class='btn delete' title='Delete this dataset'>
                                             <i class='fa fa-times icon-only'></i>
                                         </a>
