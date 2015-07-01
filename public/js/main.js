@@ -1,5 +1,8 @@
 $('document').ready(function(){
 
+    // Adjust the multivalue fields
+    $('.multivalue').multipleInput();
+
     // Make sure the delete is not a slip of the mouse
     $('.delete').on('click', function(e){
 
@@ -60,6 +63,18 @@ $('document').ready(function(){
                     }
                 }
             }
+        });
+
+        // Gather multi value fields
+        $('.multivalue').each(function() {
+
+            var name = $(this).attr('name');
+            var values = [];
+            $(this).next('div.multipleInput-container').first().find('li').each(function(){
+                values.push($(this).text());
+            });
+
+            data[name] = values;
         });
 
         var baseURL = document.location.origin;
@@ -124,6 +139,19 @@ $('document').ready(function(){
                 }
             }
         });
+
+        // Gather multi value fields
+        $('.multivalue').each(function() {
+
+            var name = $(this).attr('name');
+            var values = [];
+            $(this).next('div.multipleInput-container').first().find('li').each(function(){
+                values.push($(this).text());
+            });
+
+            data[name] = values;
+        });
+
 
         var baseURL = document.location.origin;
 

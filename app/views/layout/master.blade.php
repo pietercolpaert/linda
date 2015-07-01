@@ -8,8 +8,7 @@
         {{ HTML::script('js/main.js') }}
          <script src="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
         {{ HTML::script('js/rdf2html.js') }}
-
-
+        {{ HTML::script('js/multipleInput.js') }}
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="DC.title" content="{{ $title }}"/>

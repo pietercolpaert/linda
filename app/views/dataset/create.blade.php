@@ -36,7 +36,7 @@
                 </label>
                 <div class="col-sm-9">
                     @if($field['type'] == 'string')
-                    <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
                     @elseif($field['type'] == 'integer')
@@ -68,7 +68,7 @@
                 </label>
                 <div class="col-sm-9">
                     @if($field['type'] == 'string')
-                    <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
                     @endif
@@ -99,7 +99,7 @@
                 </label>
                 <div class="col-sm-9">
                     @if($field['type'] == 'string')
-                    <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
                     @elseif($field['type'] == 'integer')

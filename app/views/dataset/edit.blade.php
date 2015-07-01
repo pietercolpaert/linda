@@ -30,7 +30,7 @@
                 <div class="form-group">
                     @foreach ($fields as $field)
                     <?php
-                    $datasetGraph = $dataset->resource($uri . '#dataset');
+                    $datasetResource = $dataset->resource($uri . '#dataset');
                     ?>
                     @if ($field['required'] && $field['domain'] == 'dcat:Dataset')
 
@@ -39,11 +39,11 @@
                     </label>
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
-                        <?php $val = $datasetGraph->getLiteral($field['short_sem_term'])->getValue(); ?>
-                        <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <?php $val = $datasetResource->getLiteral($field['short_sem_term'])->getValue(); ?>
+                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
                         @elseif($field['type'] == 'text')
-                        <?php $val = $datasetGraph->getLiteral($field['short_sem_term'])->getValue(); ?>
+                        <?php $val = $datasetResource->getLiteral($field['short_sem_term'])->getValue(); ?>
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @endif
                         <div class='help-block'>
@@ -71,19 +71,31 @@
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
                         <?php
-                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
-                        $val = $literal;
 
-                        if (!empty($literal)) {
-                            $val = $literal->getValue();
+                        if (!$field['single_value']) {
+                            $values = $datasetResource->all($field['short_sem_term']);
+                            $val = "";
+                            foreach ($values as $value) {
+                                $val .= $value->getValue() . ',';
+                            }
+
+                            $val = rtrim($val, ',');
+                        } else {
+                            $literal = $datasetResource->getLiteral($field['short_sem_term']);
+                            $val = $literal;
+
+
+                            if (!empty($literal)) {
+                                $val = $literal->getValue();
+                            }
                         }
 
                         ?>
-                        <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
                         @elseif($field['type'] == 'text')
                         <?php
 
-                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
+                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
                         $val = $literal;
 
 
@@ -114,7 +126,7 @@
                     </div>
                 </div>
                 <?php
-                    $datasetGraph = $dataset->resource($uri);
+                    $datasetResource = $dataset->resource($uri);
                 ?>
                 <div class="form-group">
                     @foreach ($fields as $field)
@@ -127,7 +139,7 @@
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
                         <?php
-                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
+                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
                         $val = $literal;
 
                         if (!empty($literal)) {
@@ -135,12 +147,12 @@
                         }
 
                         ?>
-                        <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
 
                         @elseif($field['type'] == 'text')
                         <?php
-                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
+                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
                         $val = $literal;
 
                         if (!empty($literal)) {
@@ -161,14 +173,14 @@
                 </div>
 
                 <?php
-                    $datasetGraph = $dataset->resource($uri . '#distribution');
+                    $datasetResource = $dataset->resource($uri . '#distribution');
                 ?>
                 <div class="form-group">
                     @foreach ($fields as $field)
                     @if (!$field['required'] && $field['domain'] == 'dcat:Distribution')
 
                     <?php
-                        $literal = $datasetGraph->getLiteral($field['short_sem_term']);
+                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
                         $val = $literal;
 
                         if (!empty($literal)) {
@@ -182,7 +194,7 @@
                     </label>
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
-                        <input type="text" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
                         @elseif($field['type'] == 'text')
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>

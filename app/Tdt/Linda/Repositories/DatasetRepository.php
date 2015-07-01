@@ -106,8 +106,17 @@ class DatasetRepository
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:Dataset') {
-                if (in_array($field['type'], ['string', 'text'])) {
-                    $graph->addLiteral($dataset, $field['sem_term'], $config[$field['var_name']]);
+                if ($field['single_value'] && in_array($field['type'], ['string', 'text'])) {
+
+                    $graph->addLiteral($dataset, $field['sem_term'], trim($config[$field['var_name']]));
+
+                } else if (!$field['single_value'] && in_array($field['type'], ['string'])) {
+
+                    if (!empty($config[$field['var_name']])) {
+                        foreach ($config[$field['var_name']] as $val) {
+                            $graph->addLiteral($dataset, $field['sem_term'], $val);
+                        }
+                    }
                 }
             }
         }
@@ -131,8 +140,17 @@ class DatasetRepository
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
-                if (in_array($field['type'], ['string', 'text'])) {
+                if ($field['single_value'] && in_array($field['type'], ['string', 'text'])) {
+
                     $graph->addLiteral($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
+
+                } else if (!$field['single_value'] && in_array($field['type'], ['string'])) {
+
+                    if (!empty($config[$field['var_name']])) {
+                        foreach ($config[$field['var_name']] as $val) {
+                            $graph->addLiteral($datarecord, $field['sem_term'], $val);
+                        }
+                    }
                 }
             }
         }
@@ -201,12 +219,19 @@ class DatasetRepository
                 $resource = $graph->resource($uri . '#distribution');
             }
 
-            if ($field['single_value']) {
-                $graph->delete($resource, $field['short_sem_term']);
-            }
+            $graph->delete($resource, $field['short_sem_term']);
 
-            if (in_array($field['type'], ['string', 'text', 'list'])) {
+            if ($field['single_value'] && in_array($field['type'], ['string', 'text'])) {
+
                 $graph->addLiteral($resource, $field['sem_term'], trim($config[$field['var_name']]));
+
+            } else if (!$field['single_value'] && in_array($field['type'], ['string'])) {
+
+                if (!empty($config[$field['var_name']])) {
+                    foreach ($config[$field['var_name']] as $val) {
+                        $graph->addLiteral($resource, $field['sem_term'], $val);
+                    }
+                }
             }
         }
 
@@ -329,6 +354,17 @@ class DatasetRepository
                 'description' => 'The title of the dataset, will act as the unique name of the dataset.',
                 'domain' => 'dcat:Dataset',
                 'single_value' => true,
+            ],
+            [
+                'var_name' => 'keywords',
+                'sem_term' => 'http://www.w3.org/ns/dcat#keyword',
+                'short_sem_term' => 'dcat:keyword',
+                'type' => 'string',
+                'view_name' => 'Keywords',
+                'required' => false,
+                'description' => 'A keyword or tag describing the dataset.',
+                'domain' => 'dcat:Dataset',
+                'single_value' => false,
             ],
             [
                 'var_name' => 'description',
