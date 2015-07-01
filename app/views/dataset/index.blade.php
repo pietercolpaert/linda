@@ -19,12 +19,15 @@
 
         @foreach($datasets as $datasetGraph)
         <?php
-            $datasets = $datasetGraph->allOfType('dcat:Dataset');
-            $dataset = array_shift($datasets);
+            $catalogRecord = $datasetGraph->allOfType('dcat:CatalogRecord');
+            $catalogRecord = array_shift($catalogRecord);
 
-            $uri = $dataset->getUri();
+            $uri = $catalogRecord->getUri();
             $pieces = explode('/', $uri);
             $id = array_pop($pieces);
+
+            $dataset = $datasetGraph->allOfType('dcat:Dataset');
+            $dataset = array_shift($dataset);
         ?>
             <div class="panel button-row panel-default">
                 <div class="panel-body">

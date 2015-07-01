@@ -127,7 +127,7 @@ class DatasetRepository
 
         $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
         $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/creator', $config['user']);
+        $datarecord->addLiteral('http://purl.org/dc/terms/creator', \URL::to('/user/' . $config['user']));
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
@@ -187,16 +187,16 @@ class DatasetRepository
         }
 
         // Add the contributor
-        $graph->addLiteral($uri . '#record', 'http://purl.org/dc/terms/contributor', $config['user']);
+        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/user/' . $config['user']));
 
         foreach ($this->getFields() as $field) {
 
             $type = $field['domain'];
 
             if ($type == 'dcat:Dataset') {
-                $resource = $graph->resource($uri);
+                $resource = $graph->resource($uri . "#dataset");
             } else if ($type == 'dcat:CatalogRecord') {
-                $resource = $graph->resource($uri . '#record');
+                $resource = $graph->resource($uri);
             } else if ($type == 'dcat:Distribution') {
                 $resource = $graph->resource($uri . '#distribution');
             }

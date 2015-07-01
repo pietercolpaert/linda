@@ -30,7 +30,7 @@
                 <div class="form-group">
                     @foreach ($fields as $field)
                     <?php
-                    $datasetGraph = $dataset->resource($uri);
+                    $datasetGraph = $dataset->resource($uri . '#dataset');
                     ?>
                     @if ($field['required'] && $field['domain'] == 'dcat:Dataset')
 
@@ -114,7 +114,7 @@
                     </div>
                 </div>
                 <?php
-                    $datasetGraph = $dataset->resource($uri . '#record');
+                    $datasetGraph = $dataset->resource($uri);
                 ?>
                 <div class="form-group">
                     @foreach ($fields as $field)
