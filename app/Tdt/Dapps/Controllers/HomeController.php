@@ -6,8 +6,6 @@ class HomeController extends \Controller
 {
     public function index()
     {
-        $datasetRepo = new DatasetRepository();
-
-        return \View::make('layout.home')->with('title', 'Linda');
+        return \View::make('layout.home')->with('title', 'LINDA');
     }
 }

@@ -11,7 +11,6 @@ use View;
 
 class AuthController extends \Controller
 {
-
     public function getLogin()
     {
         return View::make('auth.login')->with('title', 'Login | Linda')
@@ -27,7 +26,7 @@ class AuthController extends \Controller
                 'password' => \Input::get('password'),
                 );
 
-            $return = \Input::get('return', 'dataset');
+            $return = \Input::get('return', 'datasets');
             $user = \Sentry::authenticateAndRemember($credentials);
 
             // Success! Redirect back

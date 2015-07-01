@@ -26,7 +26,7 @@
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">DAPPS</a>
+          <a class="navbar-brand" href="/">LINDA</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
@@ -34,14 +34,19 @@
             <li @if(\Request::segment(1) == 'datasets') class="active" @endif><a href="/datasets">Datasets</a></li>
             <li @if(\Request::segment(1) == 'apps') class="active" @endif><a href="/apps">Apps</a></li>
           </ul>
-        </div><!--/.nav-collapse -->
+          <ul class="nav navbar-nav navbar-right">
+            @if (Sentry::check())
+              <li><a href="/logout">Logout</a></li>
+            @else
+              <li><a href="/login">Login</a></li>
+            @endif
+          </ul>
+        </div>
       </div>
     </nav>
 
     <div class="container">
-
      @yield('content')
-
     </div>
     </body>
 </html>

@@ -6,11 +6,13 @@
         <div class="col-sm-7">
             <h3>Manage your datasets</h3>
         </div>
+        @if (Tdt\Dapps\Auth\Auth::hasAccess('datasets.manage'))
         <div class="col-sm-5 text-right">
             <a href='{{ URL::to('datasets/create') }}' class='btn btn-primary margin-left'
                 <i class='fa fa-plus'></i> Add
             </a>
         </div>
+        @endif
     </div>
 
     <div class="col-sm-12">

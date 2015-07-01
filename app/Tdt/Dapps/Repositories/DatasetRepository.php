@@ -307,8 +307,6 @@ class DatasetRepository
 
         $uri = \URL::to('/' . $id);
 
-        \Log::info("deleting " . $uri);
-
         $collection->remove([
             '@graph' => [
                 '$elemMatch' => [
