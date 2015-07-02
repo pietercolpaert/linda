@@ -29,9 +29,9 @@
                // input
                var $input = $('<input id="' + name + '" class="form-control" type="text" />').keyup(function(event) {
 
-                    if(event.which == 188) {
-                         // key press is space or comma
-                         var val = $(this).val().slice(0, -1); // remove space/comma from value
+                    if(event.which == 13) {
+                         // key press is Enter
+                         var val = $(this).val();
 
                          var $container = event.target.closest('div');
 
@@ -61,8 +61,6 @@
 
                // insert elements into DOM
                $container.append($list).append($input).insertAfter($(this));
-
-               //var $orig = $(this);
 
                return $(this).hide();
           });
