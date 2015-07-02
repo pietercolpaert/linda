@@ -204,6 +204,8 @@ class DatasetRepository
             return null;
         }
 
+        \Log::info($config);
+
         // Add the contributor
         $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/user/' . $config['user']));
 
@@ -427,9 +429,9 @@ class DatasetRepository
                 'single_value' => true,
             ],
             [
-                'var_name' => 'rights',
-                'sem_term' => 'http://purl.org/dc/terms/rights',
-                'short_sem_term' => 'dc:rights',
+                'var_name' => 'license',
+                'sem_term' => 'http://purl.org/dc/terms/license',
+                'short_sem_term' => 'dc:license',
                 'required' => false,
                 'type' => 'list',
                 'values' => 'https://raw.githubusercontent.com/openknowledgebe/be-data-licenses/master/licenses.json',
@@ -460,6 +462,20 @@ class DatasetRepository
                 'view_name' => 'Comment',
                 'description' => 'Comment for the data record (e.g. how was this meta-data assembled).',
                 'domain' => 'dcat:CatalogRecord',
+                'single_value' => true,
+            ],
+            [
+                'var_name' => 'periodicity',
+                'sem_term' => 'http://purl.org/dc/terms/accrualPeriodicity',
+                'short_sem_term' => 'dc:accrualPeriodicity',
+                'required' => false,
+                'type' => 'list',
+                'values' => \URL::to('lists/frequency'),
+                'key_name' => 'name',
+                'value_name' => 'url',
+                'view_name' => 'Periodicity',
+                'description' => 'The frequency with which items are added to a collection.',
+                'domain' => 'dcat:Dataset',
                 'single_value' => true,
             ],
         ];

@@ -8,7 +8,7 @@ class ListsController extends \Controller
     {
         // Enable things like: http://linda/lists/frequencies.json?q=trien
         // cfr. https://github.com/iRail/hyperRail/blob/master/app/controllers/StationController.php#L44
-        
+
         $this->lists = [
             "frequencies" => [],
             "organizationtypes" => [],
@@ -17,7 +17,7 @@ class ListsController extends \Controller
 
         \EasyRdf_Namespace::set('linda', 'http://semweb.mmlab.be/ns/linda#');
     }
-    
+
     /**
      * Display a listing of the lists available
      *
@@ -29,9 +29,13 @@ class ListsController extends \Controller
             $datasets = $this->lists;
             return $this->lists;
         } else {
-            return "todo";
+            if ($list == 'frequency') {
+                return \Response::json(json_decode(file_get_contents(app_path() . '/database/seeds/data/frequencies.json')));
+            } else {
+                return \Redirect::to('/');
+            }
         }
-        
+
     }
 
 }
