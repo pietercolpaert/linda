@@ -23,14 +23,11 @@ class ListsController extends \Controller
      *
      * @return Response
      */
-    public function index($list)
+    public function index($list = null)
     {
         if (!isset($list)) {
             $datasets = $this->lists;
-
-            return \View::make('dataset.index')
-                ->with('title', 'List | Dataset')
-                ->with('datasets', $datasets);
+            return $this->lists;
         } else {
             return "todo";
         }
