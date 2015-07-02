@@ -1,0 +1,10 @@
+[
+    {
+        "url": "http://semweb.mmlab.be/ns/linda#Routeplanning",
+        "name": "Routeplanning"
+    },
+    {
+        "url": "http://semweb.mmlab.be/ns/linda#EnvironmentalControl",
+        "name": "Environmental control"
+    }
+]

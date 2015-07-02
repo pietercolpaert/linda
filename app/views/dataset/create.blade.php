@@ -36,7 +36,7 @@
                 </label>
                 <div class="col-sm-9">
                     @if($field['type'] == 'string')
-                    <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
                     @endif
@@ -64,11 +64,11 @@
                 </label>
                 <div class="col-sm-9">
                     @if($field['type'] == 'string')
-                    <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
                     @elseif($field['type'] == 'list')
-                    <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
+                    <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}"  @if (!$field['single_value']) class="form-control multiSelect" @else class="form-control" @endif>
                         <option></option>
                         @foreach($field['data'] as $option)
                         <?php $option = (array)$option; ?>
@@ -103,11 +103,11 @@
                 </label>
                 <div class="col-sm-9">
                     @if($field['type'] == 'string')
-                    <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
+                    <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
                     @elseif($field['type'] == 'list')
-                    <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
+                    <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" @if (!$field['single_value']) class="form-control multiSelect" @else class="form-control" @endif>
                         @foreach($field['data'] as $option)
                         <?php $option = (array)$option; ?>
                         <option value="{{ $option[$field['value_name']] }}">{{ $option[$field['key_name']] }}</option>

@@ -29,8 +29,12 @@ class ListsController extends \Controller
             $datasets = $this->lists;
             return $this->lists;
         } else {
+
+            $seed_data_path = app_path() . '/database/seeds/data/';
             if ($list == 'frequency') {
-                return \Response::json(json_decode(file_get_contents(app_path() . '/database/seeds/data/frequencies.json')));
+                return \Response::json(json_decode(file_get_contents($seed_data_path . 'frequencies.json')));
+            } else if ($list == 'usecases') {
+                return \Response::json(json_decode(file_get_contents($seed_data_path . 'usecases.json')));
             } else {
                 return \Redirect::to('/');
             }

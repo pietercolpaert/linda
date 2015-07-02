@@ -40,7 +40,7 @@
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
                         <?php $val = $datasetResource->getLiteral($field['short_sem_term'])->getValue(); ?>
-                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
                         @elseif($field['type'] == 'text')
                         <?php $val = $datasetResource->getLiteral($field['short_sem_term'])->getValue(); ?>
@@ -91,7 +91,7 @@
                         }
 
                         ?>
-                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
                         @elseif($field['type'] == 'text')
                         <?php
 
@@ -170,7 +170,7 @@
                         }
 
                         ?>
-                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
 
                         @elseif($field['type'] == 'text')
@@ -217,12 +217,13 @@
                     </label>
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
-                        <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
+                        <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
                         @elseif($field['type'] == 'text')
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
-                        @elseif($field['type'] == 'list')
+                        @elseif($field['type'] == 'list' && $field['single_value'])
                         <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
+                        <option></option>
                         @foreach($field['data'] as $option)
 
                             <?php $option = (array)$option; ?>
@@ -230,6 +231,29 @@
                                 <option value="{{ $option[$field['value_name']] }}" selected>{{ $option[$field['key_name']] }}</option>
                             @else
                                 <option value="{{ $option[$field['value_name']] }}">{{ $option[$field['key_name']] }}</option>
+                            @endif
+                            @endforeach
+                        </select>
+                        @elseif($field['type'] == 'list' && !$field['single_value'])
+
+                        <?php
+                            $values = $datasetResource->all($field['short_sem_term']);
+                            $val = [];
+
+                            foreach ($values as $value) {
+                                $val[] = $value->getValue();
+                            }
+
+                        ?>
+                         <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control multiSelect">
+                        <option></option>
+                        @foreach($field['data'] as $option)
+
+                            <?php $option = (array)$option; ?>
+                            @if (in_array($option[$field['value_name']], $val))
+                                <option value="{{ $option[$field['value_name']] }}" class="added">{{ $option[$field['key_name']] }}</option>
+                            @else
+                                <option value="{{ $option[$field['value_name']] }}" class="omitted">{{ $option[$field['key_name']] }}</option>
                             @endif
                             @endforeach
                         </select>

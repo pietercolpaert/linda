@@ -110,7 +110,7 @@ class DatasetRepository
 
                     $graph->addLiteral($dataset, $field['sem_term'], trim($config[$field['var_name']]));
 
-                } else if (!$field['single_value'] && in_array($field['type'], ['string'])) {
+                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
@@ -144,7 +144,7 @@ class DatasetRepository
 
                     $graph->addLiteral($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
 
-                } else if (!$field['single_value'] && in_array($field['type'], ['string'])) {
+                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
@@ -204,8 +204,6 @@ class DatasetRepository
             return null;
         }
 
-        \Log::info($config);
-
         // Add the contributor
         $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/user/' . $config['user']));
 
@@ -227,7 +225,7 @@ class DatasetRepository
 
                 $graph->addLiteral($resource, $field['sem_term'], trim($config[$field['var_name']]));
 
-            } else if (!$field['single_value'] && in_array($field['type'], ['string'])) {
+            } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                 if (!empty($config[$field['var_name']])) {
                     foreach ($config[$field['var_name']] as $val) {
@@ -447,11 +445,14 @@ class DatasetRepository
                 'sem_term' => 'http://semweb.mmlab.be/ns/linda#useFor',
                 'short_sem_term' => 'linda:useFor',
                 'required' => false,
-                'type' => 'string',
-                'view_name' => 'Usage',
+                'type' => 'list',
+                'values' => \URL::to('lists/usecases'),
+                'key_name' => 'name',
+                'value_name' => 'url',
+                'view_name' => 'Use cases',
                 'description' => 'Links to certain applicable domains',
                 'domain' => 'dcat:Distribution',
-                'single_value' => true,
+                'single_value' => false,
             ],
             [
                 'var_name' => 'record_comment',

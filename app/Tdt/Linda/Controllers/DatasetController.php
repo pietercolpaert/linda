@@ -168,9 +168,11 @@ class DatasetController extends \Controller
 
         $input = \Input::all();
 
+        \Log::info($input);
+
         // Add current user
         $user = \Sentry::getUser()->toArray();
-        $input['user'] = $user['email'];
+        $input['user'] = $user['first_name'];
 
         $rules = $this->datasetRepo->getRules();
 
