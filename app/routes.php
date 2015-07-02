@@ -13,6 +13,7 @@
 
 Route::get('/', 'Tdt\Linda\Controllers\HomeController@index');
 
+Route::get('lists/{list}', 'Tdt\Linda\Controllers\ListsController@index');
 Route::resource('datasets', 'Tdt\Linda\Controllers\DatasetController');
 Route::get('login', 'Tdt\Linda\Controllers\AuthController@getLogin');
 Route::post('login', 'Tdt\Linda\Controllers\AuthController@postLogin');
