@@ -18,5 +18,8 @@ Route::get('login', 'Tdt\Linda\Controllers\AuthController@getLogin');
 Route::post('login', 'Tdt\Linda\Controllers\AuthController@postLogin');
 Route::get('logout', 'Tdt\Linda\Controllers\AuthController@getLogout');
 
-Route::get('{id}', 'Tdt\Linda\Controllers\DerefController@index')
+Route::get('{id}', 'Tdt\Linda\Controllers\DatasetRefController@index')
 ->where('id', '[0-9]+');
+
+Route::get('/users/{id}', 'Tdt\Linda\Controllers\UserRefController@index')
+->where('id', '[a-zA-Z0-9]+');

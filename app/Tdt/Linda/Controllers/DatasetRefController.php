@@ -2,7 +2,7 @@
 
 use Tdt\Linda\Repositories\DatasetRepository;
 
-class DerefController extends \Controller
+class DatasetRefController extends \Controller
 {
     public function index($id)
     {
