@@ -5,6 +5,10 @@ use Tdt\Linda\Auth\Auth;
 
 class DatasetController extends \Controller
 {
+    private $error_messages = array(
+        'multipleuri' => "Not all provided URIs are valid.",
+    );
+
     public function __construct()
     {
         $this->datasetRepo = new DatasetRepository();
@@ -88,7 +92,7 @@ class DatasetController extends \Controller
 
         $rules = $this->datasetRepo->getRules();
 
-        $validator = \Validator::make($input, $rules);
+        $validator = \Validator::make($input, $rules, $this->error_messages);
 
         if ($validator->fails()) {
             $message = $validator->messages()->first();
@@ -97,19 +101,6 @@ class DatasetController extends \Controller
 
         $this->datasetRepo->add($input);
     }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
 
     /**
      * Show the form for editing the specified resource.
@@ -183,7 +174,7 @@ class DatasetController extends \Controller
 
         $rules = $this->datasetRepo->getRules();
 
-        $validator = \Validator::make($input, $rules);
+        $validator = \Validator::make($input, $rules, $this->error_messages);
 
         if ($validator->fails()) {
             $message = $validator->messages()->first();

@@ -292,7 +292,8 @@ class DatasetRepository
     public function getRules()
     {
         return [
-            'title' => 'required'
+            'title' => 'required',
+            'see_also' => 'multipleuri',
         ];
     }
 
@@ -379,14 +380,26 @@ class DatasetRepository
             ],
             [
                 'var_name' => 'comment',
-                'sem_term' => 'http://purl.org/dc/terms/comment',
-                'short_sem_term' => 'dc:comment',
+                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
+                'short_sem_term' => 'rdfs:comment',
                 'required' => false,
                 'type' => 'text',
                 'view_name' => 'Comment',
                 'description' => 'Additional comments on the dataset.',
                 'domain' => 'dcat:Dataset',
                 'single_value' => true,
+            ],
+            [
+                'var_name' => 'see_also',
+                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#seeAlso',
+                'short_sem_term' => 'rdfs:seeAlso',
+                'required' => false,
+                'type' => 'string',
+                'validation' => 'uri',
+                'view_name' => 'See Also',
+                'description' => 'Link to interesting related sources. (needs to be URIs)',
+                'domain' => 'dcat:Dataset',
+                'single_value' => false,
             ],
             [
                 'var_name' => 'score',
@@ -440,8 +453,8 @@ class DatasetRepository
             ],
             [
                 'var_name' => 'record_comment',
-                'sem_term' => 'http://purl.org/dc/terms/comment',
-                'short_sem_term' => 'dc:comment',
+                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
+                'short_sem_term' => 'rdfs:comment',
                 'required' => false,
                 'type' => 'text',
                 'view_name' => 'Comment',
