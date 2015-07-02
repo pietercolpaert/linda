@@ -403,7 +403,7 @@ class DatasetRepository
             ],
             [
                 'var_name' => 'score',
-                'sem_term' => 'http://linda.mmlab.iminds.be/score',
+                'sem_term' => 'http://semweb.mmlab.be/ns/linda#score',
                 'short_sem_term' => 'linda:score',
                 'required' => false,
                 'type' => 'list',
@@ -417,7 +417,7 @@ class DatasetRepository
             ],
             [
                 'var_name' => 'recommendation',
-                'sem_term' => 'http://linda.mmlab.iminds.be/recommendation',
+                'sem_term' => 'http://semweb.mmlab.be/ns/linda#recommendation',
                 'short_sem_term' => 'linda:recommendation',
                 'required' => false,
                 'type' => 'text',
@@ -442,7 +442,7 @@ class DatasetRepository
             ],
             [
                 'var_name' => 'useFor',
-                'sem_term' => 'http://linda.mmlab.iminds.be/useFor',
+                'sem_term' => 'http://semweb.mmlab.be/ns/linda#useFor',
                 'short_sem_term' => 'linda:useFor',
                 'required' => false,
                 'type' => 'string',
