@@ -106,7 +106,7 @@ class DatasetRepository
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:Dataset') {
-                if ($field['single_value'] && in_array($field['type'], ['string', 'text'])) {
+                if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
                     $graph->addLiteral($dataset, $field['sem_term'], trim($config[$field['var_name']]));
 
@@ -140,7 +140,7 @@ class DatasetRepository
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
-                if ($field['single_value'] && in_array($field['type'], ['string', 'text'])) {
+                if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
                     $graph->addLiteral($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
 
@@ -221,7 +221,7 @@ class DatasetRepository
 
             $graph->delete($resource, $field['short_sem_term']);
 
-            if ($field['single_value'] && in_array($field['type'], ['string', 'text'])) {
+            if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
                 $graph->addLiteral($resource, $field['sem_term'], trim($config[$field['var_name']]));
 
@@ -393,8 +393,10 @@ class DatasetRepository
                 'sem_term' => 'http://linda.mmlab.iminds.be/score',
                 'short_sem_term' => 'linda:score',
                 'required' => false,
-                'type' => 'enumeration',
-                'values' => 'red|orange|green',
+                'type' => 'list',
+                'values' => 'red,orange,green',
+                'key_name' => 'name',
+                'value_name' => 'value',
                 'view_name' => 'Score',
                 'description' => 'The score of a dataset.',
                 'domain' => 'dcat:Dataset',

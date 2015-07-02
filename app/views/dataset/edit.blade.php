@@ -105,6 +105,29 @@
 
                         ?>
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
+                        @elseif($field['type'] == 'list')
+                         <?php
+
+                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
+                        $val = $literal;
+
+
+                        if (!empty($literal)) {
+                            $val = $literal->getValue();
+                        }
+
+                        ?>
+                        <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
+                        <option></option>
+                        @foreach($field['data'] as $option)
+                            <?php $option = (array)$option; ?>
+                            @if ($option[$field['value_name']] == $val)
+                                <option value="{{ $option[$field['value_name']] }}" selected>{{ $option[$field['key_name']] }}</option>
+                            @else
+                                <option value="{{ $option[$field['value_name']] }}">{{ $option[$field['key_name']] }}</option>
+                            @endif
+                            @endforeach
+                        </select>
                         @endif
                         <div class='help-block'>
                             {{ $field['description'] }}

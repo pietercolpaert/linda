@@ -45,8 +45,21 @@ class DatasetController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                $data = json_decode($this->getDocument($field['values']));
-                $field['data'] = $data;
+                if (substr($field['values'],0, 4) == 'http') {
+                    $data = json_decode($this->getDocument($field['values']));
+                    $field['data'] = $data;
+                } else {
+
+                    $values = explode(',', $field['values']);
+
+                    $data = [];
+
+                    foreach ($values as $val) {
+                        $data[] = ['name' => $val, 'value' => $val];
+                    }
+
+                    $field['data'] = $data;
+                }
             }
 
             $adjusted_fields[] = $field;
@@ -122,8 +135,21 @@ class DatasetController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                $data = json_decode($this->getDocument($field['values']));
-                $field['data'] = $data;
+                if (substr($field['values'],0, 4) == 'http') {
+                    $data = json_decode($this->getDocument($field['values']));
+                    $field['data'] = $data;
+                } else {
+
+                    $values = explode(',', $field['values']);
+
+                    $data = [];
+
+                    foreach ($values as $val) {
+                        $data[] = ['name' => $val, 'value' => $val];
+                    }
+
+                    $field['data'] = $data;
+                }
             }
 
             $adjusted_fields[] = $field;

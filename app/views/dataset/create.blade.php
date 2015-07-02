@@ -39,10 +39,6 @@
                     <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
-                    @elseif($field['type'] == 'integer')
-                    <input type="number" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
-                    @elseif($field['type'] == 'boolean')
-                    <input type='checkbox' class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" checked='checked'/>
                     @endif
                     <div class='help-block'>
                         {{ $field['description'] }}
@@ -71,6 +67,14 @@
                     <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
+                    @elseif($field['type'] == 'list')
+                    <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
+                        <option></option>
+                        @foreach($field['data'] as $option)
+                        <?php $option = (array)$option; ?>
+                        <option value="{{ $option[$field['value_name']] }}">{{ $option[$field['key_name']] }}</option>
+                        @endforeach
+                    </select>
                     @endif
                     <div class='help-block'>
                         {{ $field['description'] }}
@@ -102,10 +106,6 @@
                     <input type="text" @if (!$field['single_value']) class="form-control multivalue" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
                     @elseif($field['type'] == 'text')
                     <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($field['default_value'])){{ $field['default_value'] }}@endif</textarea>
-                    @elseif($field['type'] == 'integer')
-                    <input type="number" class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($field['default_value'])) value='{{ $field['default_value'] }}' @endif>
-                    @elseif($field['type'] == 'boolean')
-                    <input type='checkbox' class="form-control" id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" checked='checked'/>
                     @elseif($field['type'] == 'list')
                     <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
                         @foreach($field['data'] as $option)
