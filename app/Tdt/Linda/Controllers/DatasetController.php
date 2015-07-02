@@ -13,7 +13,7 @@ class DatasetController extends \Controller
     {
         $this->datasetRepo = new DatasetRepository();
 
-        \EasyRdf_Namespace::set('linda', 'http://linda.mmlab.iminds.be/');
+        \EasyRdf_Namespace::set('linda', 'http://semweb.mmlab.be/ns/linda#');
     }
     /**
      * Display a listing of the resource.
