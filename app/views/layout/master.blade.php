@@ -17,6 +17,7 @@
         {{ HTML::style('css/main.css') }}
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
         {{ HTML::style('css/font-awesome.css') }}
+        {{ HTML::script('js/distributions.js') }}
     </head>
 
     <body>

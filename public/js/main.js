@@ -87,11 +87,35 @@ $('document').ready(function(){
 
             var name = $(this).attr('name');
             var values = [];
+
             $(this).next('div.multipleInput-container').first().find('li').each(function(){
                 values.push($(this).text());
             });
 
             data[name] = values;
+        });
+
+        data['distributions'] = [];
+
+        $('.distribution').each(function() {
+
+            var obj = {'license': '', 'usecases': []};
+
+            var name = $(this).attr('name');
+
+            var $license = $(this).find('select#input_license');
+
+            obj['license'] = $license.find(':selected').val();
+
+            var values = [];
+
+            $(this).find('div.multipleInput-container').first().find('li').each(function(){
+                values.push($(this).text());
+            });
+
+            obj['usecases'] = values;
+
+            data['distributions'].push(obj);
         });
 
         var baseURL = document.location.origin;
@@ -127,7 +151,6 @@ $('document').ready(function(){
         })
     });
 
-    // Duplicated code for the most part, clean up later
     $('.btn-edit').on('click', function(e){
 
         e.preventDefault();
@@ -185,6 +208,29 @@ $('document').ready(function(){
             data[name] = values;
         });
 
+        data['distributions'] = [];
+
+        $('.distribution').each(function() {
+
+            var obj = {'license': '', 'usecases': []};
+
+            var name = $(this).attr('name');
+
+            var $license = $(this).find('select#input_license');
+
+            obj['license'] = $license.find(':selected').val();
+
+            var values = [];
+
+            $(this).find('div.multipleInput-container').first().find('li').each(function(){
+                values.push($(this).text());
+            });
+
+            obj['usecases'] = values;
+
+            data['distributions'].push(obj);
+        });
+
         var baseURL = document.location.origin;
 
         // Ajax call
@@ -216,5 +262,4 @@ $('document').ready(function(){
             }
         })
     });
-
 });

@@ -96,7 +96,7 @@
             </div>
             <div class="form-group">
             @foreach ($fields as $field)
-                @if (!$field['required'] && $field['domain'] != 'dcat:Dataset')
+                @if (!$field['required'] && $field['domain'] == 'dcat:CatalogRecord')
 
                 <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
                         {{ $field['view_name'] }}
@@ -121,8 +121,22 @@
                 @endif
             @endforeach
         </div>
-        </div>
 
+        <!-- distribution -->
+        <div class="form-group">
+            <label class="col-sm-2 control-label">
+            </label>
+            <div class="col-sm-8">
+                <h4>Distributions</h4>
+            </div>
+            <div class="col-sm-2">
+                <button type='submit' class='btn btn-cta btn-add-distribution'><i class='fa fa-plus'></i> Add</button>
+            </div>
+        </div>
+        <div id="distributions">
+
+        </div>
+        </div>
     </form>
 </div>
 

@@ -159,19 +159,28 @@ class DatasetRepository
         $graph->addResource($datarecord, 'http://xmlns.com/foaf/spec/primaryTopic', $uri . '#dataset');
 
         // Add the distribution resource
-        $distribution = $graph->resource($uri . '#distribution');
-        $distribution->addType('dcat:Distribution');
+        foreach ($config['distributions'] as $distribution) {
 
-        foreach ($this->getFields() as $field) {
-            if ($field['domain'] == 'dcat:Distribution') {
-                if (in_array($field['type'], ['string', 'text', 'list'])) {
-                    $graph->addLiteral($distribution, $field['sem_term'], trim($config[$field['var_name']]));
+            $id = $this->getIncrementalId();
+
+            $distr_uri = $uri . '#distribution' . $id;
+
+            $distributionResource = $graph->resource($distr_uri);
+            $distributionResource->addType('dcat:Distribution');
+
+            if (!empty($distribution['license'])) {
+                $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
+            }
+
+            if (!empty($distribution['usecases'])) {
+                foreach ($distribution['usecases'] as $usecase) {
+                    $graph->addResource($distributionResource, 'linda:useFor', $usecase);
                 }
             }
-        }
 
-        // Add the distribution to the dataset
-        $graph->addResource($dataset, 'dcat:distribution', $uri . '#distribution');
+            // Add the distribution to the dataset
+            $graph->addResource($dataset, 'dcat:distribution', $distr_uri);
+        }
 
         $serializer = new \EasyRdf_Serialiser_JsonLd();
 
@@ -215,8 +224,6 @@ class DatasetRepository
                 $resource = $graph->resource($uri . "#dataset");
             } else if ($type == 'dcat:CatalogRecord') {
                 $resource = $graph->resource($uri);
-            } else if ($type == 'dcat:Distribution') {
-                $resource = $graph->resource($uri . '#distribution');
             }
 
             $graph->delete($resource, $field['short_sem_term']);
@@ -233,6 +240,37 @@ class DatasetRepository
                     }
                 }
             }
+        }
+
+        foreach ($graph->allOfType('dcat:Distribution') as $distribution) {
+
+            $resource = $graph->resource($uri . "#dataset");
+
+            $graph->deleteResource($resource, 'dcat:distribution', $distribution->getUri());
+        }
+
+        // Add the distribution resource
+        foreach ($config['distributions'] as $distribution) {
+
+            $id = $this->getIncrementalId();
+
+            $distr_uri = $uri . '#distribution' . $id;
+
+            $distributionResource = $graph->resource($distr_uri);
+            $distributionResource->addType('dcat:Distribution');
+
+            if (!empty($distribution['license'])) {
+                $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
+            }
+
+            if (!empty($distribution['usecases'])) {
+                foreach ($distribution['usecases'] as $usecase) {
+                    $graph->addResource($distributionResource, 'linda:useFor', $usecase);
+                }
+            }
+
+            // Add the distribution to the dataset
+            $graph->addResource($uri . "#dataset", 'dcat:distribution', $distr_uri);
         }
 
         // Delete the json entry and replace it with the updated one
@@ -373,7 +411,7 @@ class DatasetRepository
                 'sem_term' => 'http://purl.org/dc/terms/description',
                 'short_sem_term' => 'dc:description',
                 'required' => true,
-                'type' => 'string',
+                'type' => 'text',
                 'view_name' => 'Description',
                 'description' => 'The description of the dataset.',
                 'domain' => 'dcat:Dataset',
@@ -426,34 +464,6 @@ class DatasetRepository
                 'description' => 'Small recommendations made by the researchers to make the dataset better.',
                 'domain' => 'dcat:Dataset',
                 'single_value' => true,
-            ],
-            [
-                'var_name' => 'license',
-                'sem_term' => 'http://purl.org/dc/terms/license',
-                'short_sem_term' => 'dc:license',
-                'required' => false,
-                'type' => 'list',
-                'values' => 'https://raw.githubusercontent.com/openknowledgebe/be-data-licenses/master/licenses.json',
-                'key_name' => 'title',
-                'value_name' => 'url',
-                'view_name' => 'Rights',
-                'description' => 'The link to the license that rests on the dataset.',
-                'domain' => 'dcat:Distribution',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'useFor',
-                'sem_term' => 'http://semweb.mmlab.be/ns/linda#useFor',
-                'short_sem_term' => 'linda:useFor',
-                'required' => false,
-                'type' => 'list',
-                'values' => \URL::to('lists/usecases'),
-                'key_name' => 'name',
-                'value_name' => 'url',
-                'view_name' => 'Use cases',
-                'description' => 'Links to certain applicable domains',
-                'domain' => 'dcat:Distribution',
-                'single_value' => false,
             ],
             [
                 'var_name' => 'record_comment',
