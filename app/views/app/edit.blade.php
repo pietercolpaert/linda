@@ -24,91 +24,29 @@
                     <label class="col-sm-2 control-label">
                     </label>
                     <div class="col-sm-10">
-                        <h4>Dataset required meta-data</h4>
+                        <h4>App required meta-data</h4>
                     </div>
                 </div>
                 <div class="form-group">
                     @foreach ($fields as $field)
-                    <?php
-                    $datasetResource = $dataset->resource($uri . '#dataset');
-                    ?>
-                    @if ($field['required'] && $field['domain'] == 'dcat:Dataset')
+                    @if ($field['required'] && $field['domain'] == 'odapps:Application')
 
                     <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
                         {{ $field['view_name'] }}
                     </label>
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
-                        <?php $val = $datasetResource->getLiteral($field['short_sem_term'])->getValue(); ?>
+                        <?php \Log::info($field) ?>
+                        <?php $val = $application->getLiteral($field['short_sem_term'])->getValue(); ?>
                         <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
                         @elseif($field['type'] == 'text')
-                        <?php $val = $datasetResource->getLiteral($field['short_sem_term'])->getValue(); ?>
+                        <?php $val = $application->getLiteral($field['short_sem_term'])->getValue(); ?>
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
-                        @endif
-                        <div class='help-block'>
-                            {{ $field['description'] }}
-                        </div>
-                    </div>
-                    @endif
-                    @endforeach
-                </div>
-
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">
-                    </label>
-                    <div class="col-sm-10">
-                        <h4>Dataset optional meta-data</h4>
-                    </div>
-                </div>
-                <div class="form-group">
-                    @foreach ($fields as $field)
-                    @if (!$field['required'] && $field['domain'] == 'dcat:Dataset')
-
-                    <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
-                        {{ $field['view_name'] }}
-                    </label>
-                    <div class="col-sm-9">
-                        @if($field['type'] == 'string')
+                        @elseif($field['type'] == 'list' && $field['single_value'])
                         <?php
 
-                        if (!$field['single_value']) {
-                            $values = $datasetResource->all($field['short_sem_term']);
-                            $val = "";
-                            foreach ($values as $value) {
-                                $val .= $value->getValue() . ',';
-                            }
-
-                            $val = rtrim($val, ',');
-                        } else {
-                            $literal = $datasetResource->getLiteral($field['short_sem_term']);
-                            $val = $literal;
-
-
-                            if (!empty($literal)) {
-                                $val = $literal->getValue();
-                            }
-                        }
-
-                        ?>
-                        <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
-                        @elseif($field['type'] == 'text')
-                        <?php
-
-                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
-                        $val = $literal;
-
-
-                        if (!empty($literal)) {
-                            $val = $literal->getValue();
-                        }
-
-                        ?>
-                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
-                        @elseif($field['type'] == 'list')
-                         <?php
-
-                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
+                        $literal = $application->getLiteral($field['short_sem_term']);
                         $val = $literal;
 
 
@@ -120,6 +58,7 @@
                         <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
                         <option></option>
                         @foreach($field['data'] as $option)
+
                             <?php $option = (array)$option; ?>
                             @if ($option[$field['value_name']] == $val)
                                 <option value="{{ $option[$field['value_name']] }}" selected>{{ $option[$field['key_name']] }}</option>
@@ -136,25 +75,19 @@
                     @endif
                     @endforeach
                 </div>
-
-            </div>
-
-            <div class="col-sm-6 panel panel-default">
+                </div>
+                <div class="col-sm-6 panel panel-default">
 
                 <div class="form-group">
                     <label class="col-sm-2 control-label">
                     </label>
                     <div class="col-sm-10">
-                        <h4>Additional meta-data</h4>
+                        <h4>App optional meta-data</h4>
                     </div>
                 </div>
-                <?php
-                    $datasetResource = $dataset->resource($uri);
-                ?>
                 <div class="form-group">
                     @foreach ($fields as $field)
-                    @if (!$field['required'] && $field['domain'] == 'dcat:CatalogRecord')
-
+                    @if (!$field['required'] && $field['domain'] == 'odapps:Application')
 
                     <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
                         {{ $field['view_name'] }}
@@ -162,66 +95,52 @@
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
                         <?php
-                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
-                        $val = $literal;
 
-                        if (!empty($literal)) {
-                            $val = $literal->getValue();
+                        if (!$field['single_value']) {
+                            $values = $application->all($field['short_sem_term']);
+                            $val = "";
+                            foreach ($values as $value) {
+                                $val .= $value->getValue() . ',';
+                            }
+
+                            $val = rtrim($val, ',');
+                        } else {
+                            $literal = $application->getLiteral($field['short_sem_term']);
+                            $val = $literal;
+
+
+                            if (!empty($literal)) {
+                                $val = $literal->getValue();
+                            }
                         }
 
                         ?>
                         <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
-
-
                         @elseif($field['type'] == 'text')
                         <?php
-                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
+
+                        $literal = $application->getLiteral($field['short_sem_term']);
                         $val = $literal;
+
 
                         if (!empty($literal)) {
                             $val = $literal->getValue();
                         }
 
                         ?>
-                        <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
-                        @endif
-                        <div class='help-block'>
-                            {{ $field['description'] }}
-                        </div>
-                    </div>
-
-
-                    @endif
-                    @endforeach
-                </div>
-
-                <?php
-                    $datasetResource = $dataset->resource($uri . '#distribution');
-                ?>
-                <div class="form-group">
-                    @foreach ($fields as $field)
-                    @if (!$field['required'] && $field['domain'] == 'dcat:Distribution')
-
-                    <?php
-                        $literal = $datasetResource->getLiteral($field['short_sem_term']);
-                        $val = $literal;
-
-                        if (!empty($literal)) {
-                            $val = $literal->getValue();
-                        }
-
-                    ?>
-
-                    <label for="input_{{ $field['var_name'] }}" class="col-sm-3 control-label">
-                        {{ $field['view_name'] }}
-                    </label>
-                    <div class="col-sm-9">
-                        @if($field['type'] == 'string')
-                        <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
-
-                        @elseif($field['type'] == 'text')
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @elseif($field['type'] == 'list' && $field['single_value'])
+                        <?php
+
+                        $literal = $application->getLiteral($field['short_sem_term']);
+                        $val = $literal;
+
+
+                        if (!empty($literal)) {
+                            $val = $literal->getValue();
+                        }
+
+                        ?>
                         <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
                         <option></option>
                         @foreach($field['data'] as $option)
@@ -237,7 +156,7 @@
                         @elseif($field['type'] == 'list' && !$field['single_value'])
 
                         <?php
-                            $values = $datasetResource->all($field['short_sem_term']);
+                            $values = $application->all($field['short_sem_term']);
                             $val = [];
 
                             foreach ($values as $value) {
@@ -261,8 +180,6 @@
                             {{ $field['description'] }}
                         </div>
                     </div>
-
-
                     @endif
                     @endforeach
                 </div>

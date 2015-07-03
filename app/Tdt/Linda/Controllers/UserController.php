@@ -1,9 +1,9 @@
 <?php namespace Tdt\Linda\Controllers;
 
-use Tdt\Linda\Repositories\DatasetRepository;
+use Tdt\Linda\Repositories\UserRepository;
 use Tdt\Linda\Auth\Auth;
 
-class DatasetController extends \Controller
+class UserController extends \Illuminate\Routing\Controller
 {
     private $error_messages = array(
         'multipleuri' => "Not all provided URIs are valid.",
@@ -11,9 +11,7 @@ class DatasetController extends \Controller
 
     public function __construct()
     {
-        $this->datasetRepo = new DatasetRepository();
-
-        \EasyRdf_Namespace::set('linda', 'http://semweb.mmlab.be/ns/linda#');
+        $this->userRepo = new UserRepository();
     }
 
     /**
@@ -26,13 +24,18 @@ class DatasetController extends \Controller
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
 
-        $datasets = $this->datasetRepo->getAll($limit, $offset);
+        $users = $this->userRepo->getAll($limit, $offset);
 
-        return \View::make('dataset.index')
-                ->with('title', 'List | Dataset')
-                ->with('datasets', $datasets);
+        return \View::make('user.index')
+                ->with('title', 'List | Users')
+                ->with('users', $users);
     }
 
+    public function show($id)
+    {
+        echo "hi";
+        die;
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -41,9 +44,9 @@ class DatasetController extends \Controller
      */
     public function create()
     {
-        Auth::requirePermissions('datasets.manage');
+        Auth::requirePermissions('users.manage');
 
-        $fields = $this->datasetRepo->getFields();
+        $fields = $this->userRepo->getFields();
 
         $adjusted_fields = [];
 
@@ -70,8 +73,8 @@ class DatasetController extends \Controller
             $adjusted_fields[] = $field;
         }
 
-        return \View::make('dataset.create')
-                    ->with('title', 'Add a dataset')
+        return \View::make('user.create')
+                    ->with('title', 'Add a user')
                     ->with(['fields' => $adjusted_fields]);
     }
 
@@ -83,15 +86,11 @@ class DatasetController extends \Controller
      */
     public function store()
     {
-        Auth::requirePermissions('datasets.manage');
+        Auth::requirePermissions('users.manage');
 
         $input = \Input::all();
 
-        // Add current user
-        $user = \Sentry::getUser()->toArray();
-        $input['user'] = $user['email'];
-
-        $rules = $this->datasetRepo->getRules();
+        $rules = $this->userRepo->getRules();
 
         $validator = \Validator::make($input, $rules, $this->error_messages);
 
@@ -100,7 +99,7 @@ class DatasetController extends \Controller
             \App::abort(400, $message);
         }
 
-        $this->datasetRepo->add($input);
+        $this->userRepo->add($input);
     }
 
     /**
@@ -111,17 +110,17 @@ class DatasetController extends \Controller
      */
     public function edit($id)
     {
-        Auth::requirePermissions('datasets.manage');
+        Auth::requirePermissions('users.manage');
 
         $id = \Request::segment(2);
 
-        $dataset = $this->datasetRepo->get($id);
+        $user = $this->userRepo->get($id . '#agent');
 
-        if (empty($dataset)) {
-            \Redirect::to('datasets');
+        if (empty($user)) {
+            \Redirect::to('users');
         }
 
-        $fields = $this->datasetRepo->getFields();
+        $fields = $this->userRepo->getFields();
         $adjusted_fields = [];
 
         // Expand values in the fields list such as external lists
@@ -149,9 +148,9 @@ class DatasetController extends \Controller
 
         $uri = \URL::to('/' . $id);
 
-        return \View::make('dataset.edit')
-                ->with('title', 'Edit | Linda')
-                ->with('dataset', $dataset)
+        return \View::make('user.edit')
+                ->with('title', 'Edit a user| Linda')
+                ->with('user', $user)
                 ->with('fields', $adjusted_fields)
                 ->with('uri', $uri);
     }
@@ -165,17 +164,11 @@ class DatasetController extends \Controller
      */
     public function update($id)
     {
-        Auth::requirePermissions('datasets.manage');
+        Auth::requirePermissions('users.manage');
 
         $input = \Input::all();
 
-        \Log::info($input);
-
-        // Add current user
-        $user = \Sentry::getUser()->toArray();
-        $input['user'] = $user['first_name'];
-
-        $rules = $this->datasetRepo->getRules();
+        $rules = $this->userRepo->getRules();
 
         $validator = \Validator::make($input, $rules, $this->error_messages);
 
@@ -184,7 +177,7 @@ class DatasetController extends \Controller
             \App::abort(400, $message);
         }
 
-        $this->datasetRepo->update($id, $input);
+        $this->userRepo->update($id, $input);
     }
 
     /**
@@ -195,8 +188,23 @@ class DatasetController extends \Controller
      */
     public function destroy($id)
     {
-        Auth::requirePermissions('datasets.manage');
+        Auth::requirePermissions('users.manage');
 
-        $this->datasetRepo->delete($id);
+        $this->userRepo->delete($id);
+    }
+
+    private function getDocument($uri)
+    {
+        // Create a CURL client
+        $cURL = new \Buzz\Client\Curl();
+        $cURL->setVerifyPeer(false);
+        $cURL->setTimeout(30);
+
+        // Get discovery document
+        $browser = new \Buzz\Browser($cURL);
+        $response = $browser->get(\URL::to($uri));
+
+        // Document content
+        return $response->getContent();
     }
 }

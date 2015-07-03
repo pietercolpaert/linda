@@ -36,6 +36,9 @@
             @if(Tdt\Linda\Auth\Auth::hasAccess('apps.manage'))
             <li @if(\Request::segment(1) == 'apps') class="active" @endif><a href="/apps">Apps</a></li>
             @endif
+            @if(Tdt\Linda\Auth\Auth::hasAccess('users.manage'))
+            <li @if(\Request::segment(1) == 'users') class="active" @endif><a href="/users">Users</a></li>
+            @endif
           </ul>
           <ul class="nav navbar-nav navbar-right">
             @if (Sentry::check())

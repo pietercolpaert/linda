@@ -2,7 +2,7 @@
 
 use \ML\JsonLD\JsonLD;
 
-class AppRepository
+class UserRepository
 {
     /**
      * Get all of the datasets in the form of EasyRdf_Resource's
@@ -12,7 +12,7 @@ class AppRepository
      *
      * @return array
      */
-    public function getAll($limit, $offset)
+    public function getAll($limit = 1000, $offset = 0)
     {
         $collection = $this->getMongoCollection();
 
@@ -86,8 +86,6 @@ class AppRepository
      */
     public function add($config)
     {
-        \EasyRdf_Namespace::set('odapps', 'http://semweb.mmlab.be/ns/odapps#');
-
         // Create a auto-generated subject URI
         $id = $this->getIncrementalId();
 
@@ -98,11 +96,11 @@ class AppRepository
         // Add the dataset resource
 
         $graph = new \EasyRdf_Graph();
-        $dataset = $graph->resource($uri . '#application');
-        $dataset->addType('odapps:Application');
+        $dataset = $graph->resource($uri . '#agent');
+        $dataset->addType('foaf:Agent');
 
         foreach ($this->getFields() as $field) {
-            if ($field['domain'] == 'odapps:Application') {
+            if ($field['domain'] == 'foaf:Agent') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
                     $graph->addLiteral($dataset, $field['sem_term'], trim($config[$field['var_name']]));
@@ -123,52 +121,6 @@ class AppRepository
         $jsonld = $serializer->serialise($graph, 'jsonld');
 
         $compact_document = (array)JsonLD::compact($jsonld, $context);
-
-        // Add the datarecord resource
-
-        /*$datarecord = $graph->resource($uri);
-        $datarecord->addType('dcat:CatalogRecord');
-
-        $created = time();
-
-        $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/creator', \URL::to('/user/' . $config['user']));
-
-        foreach ($this->getFields() as $field) {
-            if ($field['domain'] == 'dcat:CatalogRecord') {
-                if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-
-                    $graph->addLiteral($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
-
-                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
-                    if (!empty($config[$field['var_name']])) {
-                        foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($datarecord, $field['sem_term'], $val);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Add the relationship with the dataset
-        $graph->addResource($datarecord, 'http://xmlns.com/foaf/spec/primaryTopic', $uri . '#dataset');
-
-        // Add the distribution resource
-        $distribution = $graph->resource($uri . '#distribution');
-        $distribution->addType('dcat:Distribution');
-
-        foreach ($this->getFields() as $field) {
-            if ($field['domain'] == 'dcat:Distribution') {
-                if (in_array($field['type'], ['string', 'text', 'list'])) {
-                    $graph->addLiteral($distribution, $field['sem_term'], trim($config[$field['var_name']]));
-                }
-            }
-        }
-
-        // Add the distribution to the dataset
-        $graph->addResource($dataset, 'dcat:distribution', $uri . '#distribution');*/
 
         $serializer = new \EasyRdf_Serialiser_JsonLd();
 
@@ -193,7 +145,7 @@ class AppRepository
         $uri = \URL::to('/' . $id);
 
         // Find the graph in the collection
-        $graph = $this->get($id . '#application');
+        $graph = $this->get($id . '#agent');
 
         $context = $this->getContext();
 
@@ -205,8 +157,8 @@ class AppRepository
 
             $domain = $field['domain'];
 
-            if ($domain == 'odapps:Application') {
-                $resource = $graph->resource($uri . "#application");
+            if ($domain == 'foaf:Agent') {
+                $resource = $graph->resource($uri . "#agent");
 
                 $graph->delete($resource, $field['short_sem_term']);
 
@@ -236,7 +188,7 @@ class AppRepository
         $compact_document = (array)JsonLD::compact($jsonld, $context);
 
         $collection->remove([
-            '@id' => $uri . '#application'
+            '@id' => $uri . '#agent'
         ]);
 
         $collection->insert($compact_document);
@@ -266,7 +218,7 @@ class AppRepository
 
         $client = new \MongoClient($connString);
 
-        $mongoCollection = $client->selectCollection(\Config::get('database.connections.mongodb.database'), 'apps');
+        $mongoCollection = $client->selectCollection(\Config::get('database.connections.mongodb.database'), 'users');
 
         return $mongoCollection;
     }
@@ -279,8 +231,8 @@ class AppRepository
     public function getRules()
     {
         return [
-            'title' => 'required',
-            'description' => 'required',
+            'name' => 'required',
+            'mail' => 'email',
         ];
     }
 
@@ -318,92 +270,50 @@ class AppRepository
     {
         $collection = $this->getMongoCollection();
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/' . $id . '#agent');
 
         $collection->remove([
             '@id' => $uri
         ]);
     }
 
-     public function getFields()
+    public function getFields()
     {
         return [
             [
-                'var_name' => 'title',
-                'sem_term' => 'http://purl.org/dc/terms/title',
-                'short_sem_term' => 'dc:title',
+                'var_name' => 'name',
+                'sem_term' => 'http://xmlns.com/foaf/0.1/name',
+                'short_sem_term' => 'foaf:name',
                 'type' => 'string',
-                'view_name' => 'Title',
+                'view_name' => 'Name',
                 'required' => true,
-                'description' => 'The title of the app, will act as the unique name.',
-                'domain' => 'odapps:Application',
+                'description' => 'The name of the person.',
+                'domain' => 'foaf:Agent',
                 'single_value' => true,
             ],
             [
-                'var_name' => 'description',
-                'sem_term' => 'http://purl.org/dc/terms/description',
-                'short_sem_term' => 'dc:description',
-                'required' => true,
-                'type' => 'text',
-                'view_name' => 'Description',
-                'description' => 'The description of the app.',
-                'domain' => 'odapps:Application',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'consumes',
-                'sem_term' => 'http://semweb.mmlab.be/ns/odapps#consumes',
-                'short_sem_term' => 'odapps:consumes',
+                'var_name' => 'mail',
+                'sem_term' => 'http://xmlns.com/foaf/0.1/mbox',
+                'short_sem_term' => 'foaf:mbox',
                 'required' => false,
-                'type' => 'list',
-                'values' => \URL::to('lists/datasets'),
-                'key_name' => 'name',
-                'value_name' => 'url',
-                'view_name' => 'Consumes',
-                'description' => 'What datasets does the app consume.',
-                'domain' => 'odapps:Application',
-                'single_value' => false,
-            ],
-            [
-                'var_name' => 'creator',
-                'sem_term' => 'http://purl.org/dc/terms/creator',
-                'short_sem_term' => 'dc:creator',
-                'required' => true,
-                'type' => 'list',
-                'values' => \URL::to('lists/users'),
-                'key_name' => 'name',
-                'value_name' => 'url',
-                'view_name' => 'Creator',
-                'description' => 'Name of the creator of the application.',
-                'domain' => 'odapps:Application',
+                'type' => 'string',
+                'view_name' => 'Email',
+                'description' => 'The email adress of the person.',
+                'domain' => 'foaf:Agent',
                 'single_value' => true,
             ],
             [
-                'var_name' => 'contributor',
-                'sem_term' => 'http://purl.org/dc/terms/contributor',
-                'short_sem_term' => 'dc:contributor',
-                'required' => false,
-                'type' => 'list',
-                'values' => \URL::to('lists/users'),
-                'key_name' => 'name',
-                'value_name' => 'url',
-                'view_name' => 'Contributor',
-                'description' => 'Name of the contributors of the application.',
-                'domain' => 'odapps:Application',
-                'single_value' => true,
-            ],
-             [
-                'var_name' => 'app_type',
+                'var_name' => 'type',
                 'sem_term' => 'http://purl.org/dc/terms/type',
                 'short_sem_term' => 'dc:type',
                 'required' => false,
                 'type' => 'list',
-                'values' => \URL::to('lists/apps'),
+                'values' => \URL::to('lists/agents'),
                 'key_name' => 'name',
                 'value_name' => 'url',
                 'view_name' => 'Type',
-                'description' => 'Type of the app.',
-                'domain' => 'odapps:Application',
+                'description' => 'Type of the agent.',
+                'domain' => 'foaf:Agent',
                 'single_value' => true,
             ],
         ];

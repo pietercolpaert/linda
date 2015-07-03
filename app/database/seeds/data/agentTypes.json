@@ -1,0 +1,18 @@
+[
+    {
+    "url" : "http://schema.org/GovernmentOrganization",
+    "name": "GovernmentOrganization"
+    },
+    {
+    "url" : "http://schema.org/NGO ",
+    "name": "NGO"
+    },
+    {
+    "url" : "http://schema.org/LocalBusiness",
+    "name": "LocalBusiness"
+    },
+    {
+    "url" : "http://schema.org/Corporation  ",
+    "name": "Corporation"
+    }
+]

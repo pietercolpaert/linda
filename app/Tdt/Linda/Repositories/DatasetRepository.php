@@ -12,7 +12,7 @@ class DatasetRepository
      *
      * @return array
      */
-    public function getAll($limit, $offset)
+    public function getAll($limit = 1000, $offset = 0)
     {
         $collection = $this->getMongoCollection();
 
@@ -78,7 +78,7 @@ class DatasetRepository
             return $graph;
 
         } else {
-            return null;
+            return [];
         }
     }
 
@@ -294,6 +294,7 @@ class DatasetRepository
         return [
             'title' => 'required',
             'see_also' => 'multipleuri',
+            'description' => 'required'
         ];
     }
 

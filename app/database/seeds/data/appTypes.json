@@ -1,0 +1,18 @@
+[
+    {
+    "url" : "http://schema.org/SoftwareApplication",
+    "name" : "SoftwareApplication"
+    },
+    {
+    "url" : "http://schema.org/MobileApplication",
+    "name" : "MobileApplication"
+    },
+    {
+    "url" : "http://schema.org/WebApplication",
+    "name" : "WebApplication"
+    },
+    {
+    "url" : "http://schema.org/VideoGame",
+    "name" : "VideoGame"
+}
+]

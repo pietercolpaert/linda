@@ -28,8 +28,7 @@ class UserSeeder extends Seeder {
         Sentry::getGroupProvider()->create(array(
             'name'        => 'everyone',
             'permissions' => array(
-                'apps.view' => 1,
-                'datasets.view' => 1
+
             ),
         ));
 
@@ -47,6 +46,7 @@ class UserSeeder extends Seeder {
             'permissions' => array(
                 'datasets.manage' => 1,
                 'apps.manage' => 1,
+                'users.manage' => 1,
             ),
         ));
 
