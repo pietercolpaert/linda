@@ -199,4 +199,19 @@ class DatasetController extends \Controller
 
         $this->datasetRepo->delete($id);
     }
+
+    private function getDocument($uri)
+    {
+        // Create a CURL client
+        $cURL = new \Buzz\Client\Curl();
+        $cURL->setVerifyPeer(false);
+        $cURL->setTimeout(30);
+
+        // Get discovery document
+        $browser = new \Buzz\Browser($cURL);
+        $response = $browser->get(\URL::to($uri));
+
+        // Document content
+        return $response->getContent();
+    }
 }
