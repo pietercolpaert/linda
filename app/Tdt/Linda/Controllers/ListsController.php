@@ -45,6 +45,8 @@ class ListsController extends \Controller
                 $name = 'agentTypes.json';
             } else if ($list == 'apps') {
                 $name = 'appTypes.json';
+            } else if ($list == 'geo') {
+                $name = 'geonames.json';
             } else if ($list == 'datasets') {
                 return $this->createDatasetList();
             } else if ($list == 'users') {
