@@ -119,7 +119,7 @@ class AppController extends \Controller
         $application = $application->allOfType('odapps:Application');
         $application = array_shift($application);
 
-        if (empty($application)) {
+        if (is_null($application)) {
             \Redirect::to('apps');
         }
 

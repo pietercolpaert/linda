@@ -108,13 +108,13 @@ class DatasetRepository
             if ($field['domain'] == 'dcat:Dataset') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                    $graph->addLiteral($dataset, $field['sem_term'], trim($config[$field['var_name']]));
+                    $graph->add($dataset, $field['sem_term'], trim($config[$field['var_name']]));
 
                 } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($dataset, $field['sem_term'], $val);
+                            $graph->add($dataset, $field['sem_term'], $val);
                         }
                     }
                 }
@@ -136,19 +136,19 @@ class DatasetRepository
 
         $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
         $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/creator', \URL::to('/user/' . $config['user']));
+        $datarecord->add('http://purl.org/dc/terms/creator', \URL::to('/user/' . $config['user']));
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                    $graph->addLiteral($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
+                    $graph->add($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
 
                 } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($datarecord, $field['sem_term'], $val);
+                            $graph->add($datarecord, $field['sem_term'], $val);
                         }
                     }
                 }
@@ -230,13 +230,13 @@ class DatasetRepository
 
             if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                $graph->addLiteral($resource, $field['sem_term'], trim($config[$field['var_name']]));
+                $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
 
             } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                 if (!empty($config[$field['var_name']])) {
                     foreach ($config[$field['var_name']] as $val) {
-                        $graph->addLiteral($resource, $field['sem_term'], $val);
+                        $graph->add($resource, $field['sem_term'], $val);
                     }
                 }
             }

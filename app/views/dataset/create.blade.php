@@ -123,14 +123,14 @@
         </div>
 
         <!-- distribution -->
-        <div class="form-group">
+        <div class="form-group distribution-form">
             <label class="col-sm-2 control-label">
             </label>
             <div class="col-sm-8">
                 <h4>Distributions</h4>
             </div>
             <div class="col-sm-2">
-                <button type='submit' class='btn btn-cta btn-add-distribution'><i class='fa fa-plus'></i> Add</button>
+                <button type='button' class='btn btn-cta btn-add-distribution'><i class='fa fa-plus'></i> Add</button>
             </div>
         </div>
         <div id="distributions">

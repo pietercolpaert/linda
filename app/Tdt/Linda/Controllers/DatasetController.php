@@ -118,7 +118,7 @@ class DatasetController extends \Controller
         $dataset = $this->datasetRepo->get($id);
 
         if (empty($dataset)) {
-            \Redirect::to('datasets');
+            return \Redirect::to('datasets');
         }
 
         $fields = $this->datasetRepo->getFields();

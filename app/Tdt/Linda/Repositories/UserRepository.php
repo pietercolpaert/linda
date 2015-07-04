@@ -48,7 +48,7 @@ class UserRepository
      */
     public function get($id)
     {
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/users/' . $id);
 
         $collection = $this->getMongoCollection();
 
@@ -89,12 +89,11 @@ class UserRepository
         // Create a auto-generated subject URI
         $id = $this->getIncrementalId();
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/users/' . $id);
 
         $context = $this->getContext();
 
         // Add the dataset resource
-
         $graph = new \EasyRdf_Graph();
         $dataset = $graph->resource($uri . '#agent');
         $dataset->addType('foaf:Agent');
@@ -142,7 +141,7 @@ class UserRepository
      */
     public function update($id, $config)
     {
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/users/' . $id);
 
         // Find the graph in the collection
         $graph = $this->get($id . '#agent');
@@ -270,7 +269,7 @@ class UserRepository
     {
         $collection = $this->getMongoCollection();
 
-        $uri = \URL::to('/' . $id . '#agent');
+        $uri = \URL::to('/users' . $id . '#agent');
 
         $collection->remove([
             '@id' => $uri

@@ -33,8 +33,19 @@ class UserController extends \Illuminate\Routing\Controller
 
     public function show($id)
     {
-        echo "hi";
-        die;
+        $graph = $this->userRepo->get($id . '#agent');
+
+        if (is_array($graph)) {
+            return \Redirect::to('/users');
+        }
+
+        $serializer = new \EasyRdf_Serialiser_Turtle();
+
+        $turtle = $serializer->serialise($graph, 'turtle');
+
+        return \View::make('user.detail')
+                ->with('title', 'Detail | Linda')
+                ->with('turtle', $turtle);
     }
 
     /**
