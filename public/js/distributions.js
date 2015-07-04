@@ -44,7 +44,7 @@ $('document').ready(function() {
                         <h4>Distribution</h4>\
                     </div>\
                     <div class="col-sm-2">\
-                        <button class="btn btn-cta btn-remove-distribution"><i class="fa fa-times icon-only"></i></button>\
+                        <button type="button" class="btn btn-cta btn-remove-distribution"><i class="fa fa-times icon-only"></i></button>\
                     </div>';
 
         var $header = $('<div class="form-group"></div>')

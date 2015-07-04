@@ -95,23 +95,29 @@ class AppRepository
 
         $context = $this->getContext();
 
-        // Add the dataset resource
-
         $graph = new \EasyRdf_Graph();
-        $dataset = $graph->resource($uri . '#application');
-        $dataset->addType('odapps:Application');
+        $application = $graph->resource($uri . '#application');
+        $application->addType('odapps:Application');
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'odapps:Application') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                    $graph->addLiteral($dataset, $field['sem_term'], trim($config[$field['var_name']]));
+                     if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                        $graph->addResource($application, $field['sem_term'], trim($config[$field['var_name']]));
+                    } else {
+                        $graph->add($application, $field['sem_term'], trim($config[$field['var_name']]));
+                    }
 
                 } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($dataset, $field['sem_term'], $val);
+                            if(filter_var($val, FILTER_VALIDATE_URL)) {
+                                $graph->addResource($application, $field['sem_term'], $val);
+                            } else {
+                                $graph->add($application, $field['sem_term'], $val);
+                            }
                         }
                     }
                 }
@@ -123,52 +129,6 @@ class AppRepository
         $jsonld = $serializer->serialise($graph, 'jsonld');
 
         $compact_document = (array)JsonLD::compact($jsonld, $context);
-
-        // Add the datarecord resource
-
-        /*$datarecord = $graph->resource($uri);
-        $datarecord->addType('dcat:CatalogRecord');
-
-        $created = time();
-
-        $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/creator', \URL::to('/user/' . $config['user']));
-
-        foreach ($this->getFields() as $field) {
-            if ($field['domain'] == 'dcat:CatalogRecord') {
-                if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-
-                    $graph->addLiteral($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
-
-                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
-                    if (!empty($config[$field['var_name']])) {
-                        foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($datarecord, $field['sem_term'], $val);
-                        }
-                    }
-                }
-            }
-        }
-
-        // Add the relationship with the dataset
-        $graph->addResource($datarecord, 'http://xmlns.com/foaf/spec/primaryTopic', $uri . '#dataset');
-
-        // Add the distribution resource
-        $distribution = $graph->resource($uri . '#distribution');
-        $distribution->addType('dcat:Distribution');
-
-        foreach ($this->getFields() as $field) {
-            if ($field['domain'] == 'dcat:Distribution') {
-                if (in_array($field['type'], ['string', 'text', 'list'])) {
-                    $graph->addLiteral($distribution, $field['sem_term'], trim($config[$field['var_name']]));
-                }
-            }
-        }
-
-        // Add the distribution to the dataset
-        $graph->addResource($dataset, 'dcat:distribution', $uri . '#distribution');*/
 
         $serializer = new \EasyRdf_Serialiser_JsonLd();
 
@@ -212,13 +172,21 @@ class AppRepository
 
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                    $graph->addLiteral($resource, $field['sem_term'], trim($config[$field['var_name']]));
+                    if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                        $graph->addResource($resource, $field['sem_term'], trim($config[$field['var_name']]));
+                    } else {
+                        $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
+                    }
 
                 } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($resource, $field['sem_term'], $val);
+                            if(filter_var($val, FILTER_VALIDATE_URL)) {
+                                $graph->addResource($resource, $field['sem_term'], $val);
+                            } else {
+                                $graph->add($resource, $field['sem_term'], $val);
+                            }
                         }
                     }
                 }

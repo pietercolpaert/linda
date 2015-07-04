@@ -95,20 +95,28 @@ class UserRepository
 
         // Add the dataset resource
         $graph = new \EasyRdf_Graph();
-        $dataset = $graph->resource($uri . '#agent');
-        $dataset->addType('foaf:Agent');
+        $user = $graph->resource($uri . '#agent');
+        $user->addType('foaf:Agent');
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'foaf:Agent') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                    $graph->addLiteral($dataset, $field['sem_term'], trim($config[$field['var_name']]));
+                    if(filter_var($url, FILTER_VALIDATE_URL)) {
+                        $graph->addResource($$user, $field['sem_term'], trim($config[$field['var_name']]));
+                    } else {
+                        $graph->add($$user, $field['sem_term'], trim($config[$field['var_name']]));
+                    }
 
                 } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($dataset, $field['sem_term'], $val);
+                            if(filter_var($url, FILTER_VALIDATE_URL)) {
+                                $graph->addResource($$user, $field['sem_term'], $val);
+                            } else {
+                                $graph->add($$user, $field['sem_term'], $val);
+                            }
                         }
                     }
                 }
@@ -163,13 +171,21 @@ class UserRepository
 
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                    $graph->addLiteral($resource, $field['sem_term'], trim($config[$field['var_name']]));
+                     if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                        $graph->addResource($resource, $field['sem_term'], trim($config[$field['var_name']]));
+                    } else {
+                        $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
+                    }
 
                 } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            $graph->addLiteral($resource, $field['sem_term'], $val);
+                            if(filter_var($val, FILTER_VALIDATE_URL)) {
+                                $graph->addResource($resource, $field['sem_term'], $val);
+                            } else {
+                                $graph->add($resource, $field['sem_term'], $val);
+                            }
                         }
                     }
                 }
