@@ -17,7 +17,7 @@
                     if (values[index]) {
                          $list.append($('<li class="multipleInput"><span>' + values[index] + '</span></li>')
                               .append($('<a href="#" class="fa fa-times icon-only" title="Remove" />')
-                                   .click(function(e) {
+                                   .on('click', function(e) {
                                         $(this).parent().remove();
                                         e.preventDefault();
                                    })
@@ -30,6 +30,7 @@
                var $input = $('<input id="' + name + '" class="form-control" type="text" />').keyup(function(event) {
 
                     if(event.which == 13) {
+                         event.preventDefault();
                          // key press is Enter
                          var val = $(this).val();
 
@@ -39,7 +40,7 @@
 
                          $list.append($('<li class="multipleInput"><span>' + val + '</span></li>')
                               .append($('<a href="#" class="fa fa-times icon-only" title="Remove" />')
-                                   .click(function(e) {
+                                   .on('click', function(e) {
                                         $(this).parent().remove();
                                         e.preventDefault();
                                    })
@@ -55,7 +56,7 @@
                });
 
                // container div
-               var $container = $('<div id="' + name + '" class="multipleInput-container" />').click(function() {
+               var $container = $('<div id="' + name + '" class="multipleInput-container" />').on('click', function() {
                     $input.focus();
                });
 

@@ -17,9 +17,11 @@ $('document').ready(function() {
     });
 
     // Use the document on click, we need to catch the event on auto-generated clicks
-    $(document).on('click', '.btn-remove-distribution', function(e) {
+    $('div.distribution-form').on('click', '.btn-remove-distribution', function(e) {
 
         e.preventDefault();
+        console.log($(this));
+
         var $form_group = $(this).closest('div.form-group');
 
         var $input_group = $form_group.nextAll('.distribution:first');
