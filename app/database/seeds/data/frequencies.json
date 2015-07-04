@@ -1,0 +1,70 @@
+[
+{
+    "url": "http://purl.org/cld/freq/annual",
+    "name": "annual"
+},
+{
+    "url": "http://purl.org/cld/freq/biennial",
+    "name": "biennial"
+},
+{
+    "url": "http://purl.org/cld/freq/bimonthly",
+    "name": "bimonthly"
+},
+{
+    "url": "http://purl.org/cld/freq/biweekly",
+    "name": "biweekly"
+},
+{
+    "url": "http://purl.org/cld/freq/continuous",
+    "name": "continuous"
+},
+{
+    "url": "http://purl.org/cld/freq/daily",
+    "name": "daily"
+},
+{
+    "url": "http://purl.org/cld/freq/irregular",
+    "name": "irregular"
+},
+{
+    "url": "http://purl.org/cld/freq/monthly",
+    "name": "monthly"
+},
+{
+    "url": "http://purl.org/cld/freq/quarterly",
+    "name": "quarterly"
+},
+{
+    "url": "http://purl.org/cld/freq/semiannual",
+    "name": "semiannual"
+},
+{
+    "url": "http://purl.org/cld/freq/semimonthly",
+    "name": "semimonthly"
+},
+{
+    "url": "http://purl.org/cld/freq/semiweekly",
+    "name": "semiweekly"
+},
+{
+    "url": "http://purl.org/cld/freq/threeTimesAMonth",
+    "name": "threeTimesAMonth"
+},
+{
+    "url": "http://purl.org/cld/freq/threeTimesAWeek",
+    "name": "threeTimesAWeek"
+},
+{
+    "url": "http://purl.org/cld/freq/threeTimesAYear",
+    "name": "threeTimesAYear"
+},
+{
+    "url": "http://purl.org/cld/freq/triennial",
+    "name": "triennial"
+},
+{
+    "url": "http://purl.org/cld/freq/weekly",
+    "name": "weekly"
+}
+]

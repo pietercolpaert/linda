@@ -83,6 +83,15 @@ return array(
 			'prefix'   => '',
 		),
 
+		'mongodb' => array(
+			'driver'   => 'mongodb',
+			'host'     => 'localhost',
+			'database' => 'linda',
+			'username' => 'root',
+			'password' => '',
+			'port' 	   => 27017,
+		),
+
 	),
 
 	/*
