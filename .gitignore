@@ -1,5 +1,7 @@
 /vendor
 /node_modules
+app/config/production
 Homestead.yaml
 .env
 .DS_Store
+composer.lock

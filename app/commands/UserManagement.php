@@ -73,6 +73,10 @@ class UserManagement extends Command {
                 'activated'   => 1,
             ));
 
+            $newUser  = Sentry::getUserProvider()->findByLogin($name);
+            $adminGroup = Sentry::getGroupProvider()->findByName('superadmin');
+            $newUser->addGroup($adminGroup);
+
             $this->info('The user ' . $name . ' has been created and activated.');
 
         } else if (!empty($delete)) {
