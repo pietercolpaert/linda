@@ -102,17 +102,17 @@ class UserRepository
             if ($field['domain'] == 'foaf:Agent') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
 
-                    if(filter_var($url, FILTER_VALIDATE_URL)) {
-                        $graph->addResource($$user, $field['sem_term'], trim($config[$field['var_name']]));
+                    if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                        $graph->addResource($user, $field['sem_term'], trim($config[$field['var_name']]));
                     } else {
-                        $graph->add($$user, $field['sem_term'], trim($config[$field['var_name']]));
+                        $graph->add($user, $field['sem_term'], trim($config[$field['var_name']]));
                     }
 
                 } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
 
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            if(filter_var($url, FILTER_VALIDATE_URL)) {
+                            if(filter_var($val, FILTER_VALIDATE_URL)) {
                                 $graph->addResource($$user, $field['sem_term'], $val);
                             } else {
                                 $graph->add($$user, $field['sem_term'], $val);

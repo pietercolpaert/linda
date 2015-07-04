@@ -36,7 +36,6 @@
                     </label>
                     <div class="col-sm-9">
                         @if($field['type'] == 'string')
-                        <?php \Log::info($field) ?>
                         <?php $val = $application->getLiteral($field['short_sem_term'])->getValue(); ?>
                         <input type="text" @if (!$field['single_value']) class="form-control multiInput" @else class="form-control" @endif id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" placeholder="" @if(isset($val)) value='{{ $val }}' @endif>
 
@@ -160,7 +159,7 @@
                             $val = [];
 
                             foreach ($values as $value) {
-                                $val[] = $value->getValue();
+                                $val[] = $value->getUri();
                             }
                         ?>
                          <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control multiSelect">

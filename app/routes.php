@@ -30,3 +30,6 @@ Route::get('logout', 'Tdt\Linda\Controllers\AuthController@getLogout');
 // Dereferencing
 Route::get('{id}', 'Tdt\Linda\Controllers\DatasetRefController@index')
 ->where('id', '[0-9]+');
+
+// Catalog
+Route::get('/catalog', 'Tdt\Linda\Controllers\CatalogController@index');

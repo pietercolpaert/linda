@@ -286,7 +286,7 @@ class AppRepository
     {
         $collection = $this->getMongoCollection();
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/' . $id . '#application');
 
         $collection->remove([
             '@id' => $uri
@@ -319,6 +319,20 @@ class AppRepository
                 'single_value' => true,
             ],
             [
+                'var_name' => 'contributor',
+                'sem_term' => 'http://purl.org/dc/terms/contributor',
+                'short_sem_term' => 'dc:contributor',
+                'required' => false,
+                'type' => 'list',
+                'values' => \URL::to('lists/users'),
+                'key_name' => 'name',
+                'value_name' => 'url',
+                'view_name' => 'Contributor',
+                'description' => 'Name of the contributors of the application.',
+                'domain' => 'odapps:Application',
+                'single_value' => false,
+            ],
+            [
                 'var_name' => 'consumes',
                 'sem_term' => 'http://semweb.mmlab.be/ns/odapps#consumes',
                 'short_sem_term' => 'odapps:consumes',
@@ -343,20 +357,6 @@ class AppRepository
                 'value_name' => 'url',
                 'view_name' => 'Creator',
                 'description' => 'Name of the creator of the application.',
-                'domain' => 'odapps:Application',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'contributor',
-                'sem_term' => 'http://purl.org/dc/terms/contributor',
-                'short_sem_term' => 'dc:contributor',
-                'required' => false,
-                'type' => 'list',
-                'values' => \URL::to('lists/users'),
-                'key_name' => 'name',
-                'value_name' => 'url',
-                'view_name' => 'Contributor',
-                'description' => 'Name of the contributors of the application.',
                 'domain' => 'odapps:Application',
                 'single_value' => true,
             ],

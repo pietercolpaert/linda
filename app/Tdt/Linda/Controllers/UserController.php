@@ -21,6 +21,8 @@ class UserController extends \Illuminate\Routing\Controller
      */
     public function index()
     {
+        Auth::requirePermissions('users.manage');
+
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
 

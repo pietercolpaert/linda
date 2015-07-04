@@ -23,6 +23,8 @@ class DatasetController extends \Controller
      */
     public function index()
     {
+        Auth::requirePermissions('datasets.manage');
+
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
 

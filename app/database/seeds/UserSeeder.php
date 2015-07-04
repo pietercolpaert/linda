@@ -47,6 +47,7 @@ class UserSeeder extends Seeder {
                 'datasets.manage' => 1,
                 'apps.manage' => 1,
                 'users.manage' => 1,
+                'catalog.view' => 1
             ),
         ));
 
