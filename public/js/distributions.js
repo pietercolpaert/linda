@@ -17,7 +17,7 @@ $('document').ready(function() {
     });
 
     // Use the document on click, we need to catch the event on auto-generated clicks
-    $('div.distribution-form').on('click', '.btn-remove-distribution', function(e) {
+    $(document).on('click', '.btn-remove-distribution', function(e) {
 
         e.preventDefault();
         console.log($(this));
