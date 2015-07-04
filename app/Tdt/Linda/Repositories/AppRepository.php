@@ -12,7 +12,7 @@ class AppRepository
      *
      * @return array
      */
-    public function getAll($limit, $offset)
+    public function getAll($limit = 1000, $offset = 0)
     {
         $collection = $this->getMongoCollection();
 

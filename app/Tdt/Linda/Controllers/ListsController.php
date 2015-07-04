@@ -3,6 +3,7 @@
 use Tdt\Linda\Auth\Auth;
 use Tdt\Linda\Repositories\DatasetRepository;
 use Tdt\Linda\Repositories\UserRepository;
+use Tdt\Linda\Repositories\AppRepository;
 
 class ListsController extends \Controller
 {
@@ -40,7 +41,7 @@ class ListsController extends \Controller
             if ($list == 'frequency') {
                 $name = 'frequencies.json';
             } else if ($list == 'usecases') {
-                $name = 'usecases.json';
+                return $this->createUsecaseList();
             } else if ($list == 'agents') {
                 $name = 'agentTypes.json';
             } else if ($list == 'apps') {
@@ -115,5 +116,30 @@ class ListsController extends \Controller
         }
 
         return $users;
+    }
+
+    private function createUsecaseList()
+    {
+        $seed_data_path = app_path() . '/database/seeds/data/';
+
+        $name = 'usecases.json';
+
+        $usecases = json_decode(file_get_contents($seed_data_path . $name));
+
+        // Fetch all of the apps
+        $appsRepo = new AppRepository();
+
+        $appGraphs = $appsRepo->getAll();
+
+        foreach ($appGraphs as $appGraph) {
+            foreach ($appGraph->allOfType('odapps:Application') as $appResource) {
+                $uri = $appResource->getUri();
+                $title = $appGraph->getLiteral($uri, 'dc:title')->getValue();
+
+                $usecases[] = ['name' => $title, 'url' => $uri];
+            }
+        }
+
+        return \Response::json($usecases);
     }
 }
