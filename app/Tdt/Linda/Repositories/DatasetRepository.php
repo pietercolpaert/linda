@@ -134,7 +134,7 @@ class DatasetRepository
 
         $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
         $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/users/' . $config['user']));
+        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/users/' . strtolower(str_replace(" ","",$config['user']))));
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
@@ -217,7 +217,7 @@ class DatasetRepository
         }
 
         // Add the contributor
-        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . $config['user']));
+        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ","",$config['user']))));
 
         foreach ($this->getFields() as $field) {
 
