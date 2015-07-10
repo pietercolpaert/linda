@@ -37,6 +37,8 @@ class DatasetController extends \Controller
 
     public function show($id)
     {
+        Auth::requirePermissions('datasets.manage');
+
         $graph = $this->datasetRepo->get($id);
 
         if (empty($graph)) {
@@ -68,7 +70,7 @@ class DatasetController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
