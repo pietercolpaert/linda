@@ -109,11 +109,16 @@
                          <?php
 
                         $literal = $user->getLiteral($field['short_sem_term']);
-                        $val = $literal;
-
+                        $val = '';
 
                         if (!empty($literal)) {
                             $val = $literal->getValue();
+                        } else {
+                            $literal = $user->get($field['short_sem_term']);
+
+                            if (!empty($literal)) {
+                                $val = $literal->getUri();
+                            }
                         }
 
                         ?>

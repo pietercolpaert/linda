@@ -34,6 +34,22 @@ class AppController extends \Controller
                 ->with('apps', $apps);
     }
 
+    public function show($id)
+    {
+        $graph = $this->appRepo->get($id . '#application');
+
+        if (empty($graph)) {
+            \Redirect::to('/');
+        }
+
+        $serializer = new \EasyRdf_Serialiser_Turtle();
+
+        $turtle = $serializer->serialise($graph, 'turtle');
+
+        return \View::make('dataset.detail')
+                ->with('title', 'Detail | Linda')
+                ->with('turtle', $turtle);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -151,7 +167,7 @@ class AppController extends \Controller
             $adjusted_fields[] = $field;
         }
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/users/' . $id);
 
         return \View::make('app.edit')
                 ->with('title', 'Edit | Linda')

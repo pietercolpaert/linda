@@ -159,7 +159,7 @@ class UserController extends \Illuminate\Routing\Controller
             $adjusted_fields[] = $field;
         }
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/users/' . $id);
 
         return \View::make('user.edit')
                 ->with('title', 'Edit a user| Linda')
