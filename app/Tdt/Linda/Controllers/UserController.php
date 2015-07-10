@@ -35,6 +35,8 @@ class UserController extends \Illuminate\Routing\Controller
 
     public function show($id)
     {
+        Auth::requirePermissions('users.manage');
+
         $graph = $this->userRepo->get($id . '#agent');
 
         if (is_array($graph)) {

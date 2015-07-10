@@ -36,6 +36,8 @@ class AppController extends \Controller
 
     public function show($id)
     {
+        Auth::requirePermissions('apps.manage');
+
         $graph = $this->appRepo->get($id . '#application');
 
         if (empty($graph)) {
