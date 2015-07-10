@@ -285,7 +285,7 @@ class UserRepository
     {
         $collection = $this->getMongoCollection();
 
-        $uri = \URL::to('/users' . $id . '#agent');
+        $uri = \URL::to('/users/' . $id . '#agent');
 
         $collection->remove([
             '@id' => $uri
