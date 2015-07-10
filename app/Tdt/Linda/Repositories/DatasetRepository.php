@@ -48,7 +48,7 @@ class DatasetRepository
      */
     public function get($id)
     {
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/datasets/' . $id);
 
         $collection = $this->getMongoCollection();
 
@@ -94,7 +94,7 @@ class DatasetRepository
         // Create a auto-generated subject URI
         $id = $this->getIncrementalId();
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/datasets/' . $id);
 
         $context = $this->getContext();
 
@@ -107,11 +107,9 @@ class DatasetRepository
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:Dataset') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-
                     $graph->add($dataset, $field['sem_term'], trim($config[$field['var_name']]));
 
-                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
+                } elseif (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
                             $graph->add($dataset, $field['sem_term'], $val);
@@ -136,21 +134,20 @@ class DatasetRepository
 
         $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
         $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/user/' . $config['user']));
+        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/users/' . $config['user']));
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-                    if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                    if (filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
                         $graph->addResource($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
                     } else {
                         $graph->add($datarecord, $field['sem_term'], trim($config[$field['var_name']]));
                     }
-                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
+                } elseif (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            if(filter_var($val, FILTER_VALIDATE_URL)) {
+                            if (filter_var($val, FILTER_VALIDATE_URL)) {
                                 $graph->addResource($datarecord, $field['sem_term'], $val);
                             } else {
                                 $graph->add($datarecord, $field['sem_term'], $val);
@@ -208,7 +205,7 @@ class DatasetRepository
      */
     public function update($id, $config)
     {
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/datasets/' . $id);
 
         // Find the graph in the collection
         $graph = $this->get($id);
@@ -220,7 +217,7 @@ class DatasetRepository
         }
 
         // Add the contributor
-        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/user/' . $config['user']));
+        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . $config['user']));
 
         foreach ($this->getFields() as $field) {
 
@@ -384,7 +381,7 @@ class DatasetRepository
     {
         $collection = $this->getMongoCollection();
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/datasets/' . $id);
 
         $collection->remove([
             '@graph' => [

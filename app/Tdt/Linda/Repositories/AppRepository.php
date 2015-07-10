@@ -48,7 +48,7 @@ class AppRepository
      */
     public function get($id)
     {
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/apps/' . $id);
 
         $collection = $this->getMongoCollection();
 
@@ -91,7 +91,7 @@ class AppRepository
         // Create a auto-generated subject URI
         $id = $this->getIncrementalId();
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/apps/' . $id);
 
         $context = $this->getContext();
 
@@ -150,7 +150,7 @@ class AppRepository
      */
     public function update($id, $config)
     {
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/apps/' . $id);
 
         // Find the graph in the collection
         $graph = $this->get($id . '#application');
@@ -286,7 +286,7 @@ class AppRepository
     {
         $collection = $this->getMongoCollection();
 
-        $uri = \URL::to('/' . $id . '#application');
+        $uri = \URL::to('/apps/' . $id . '#application');
 
         $collection->remove([
             '@id' => $uri

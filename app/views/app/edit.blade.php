@@ -46,11 +46,16 @@
                         <?php
 
                         $literal = $application->getLiteral($field['short_sem_term']);
-                        $val = $literal;
-
+                        $val = '';
 
                         if (!empty($literal)) {
                             $val = $literal->getValue();
+                        } else {
+                            $literal = $application->get($field['short_sem_term']);
+
+                            if (!empty($literal)) {
+                                $val = $literal->getUri();
+                            }
                         }
 
                         ?>
@@ -98,6 +103,7 @@
                         if (!$field['single_value']) {
                             $values = $application->all($field['short_sem_term']);
                             $val = "";
+
                             foreach ($values as $value) {
                                 $val .= $value->getValue() . ',';
                             }
@@ -118,25 +124,34 @@
                         @elseif($field['type'] == 'text')
                         <?php
 
-                        $literal = $application->getLiteral($field['short_sem_term']);
-                        $val = $literal;
-
+                        $literal = $application->get($field['short_sem_term']);
+                        $val = '';
 
                         if (!empty($literal)) {
                             $val = $literal->getValue();
+                        } else {
+                            $literal = $application->get($field['short_sem_term']);
+
+                            if (!empty($literal)) {
+                                $val = $literal->getUri();
+                            }
                         }
 
                         ?>
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @elseif($field['type'] == 'list' && $field['single_value'])
                         <?php
-
                         $literal = $application->getLiteral($field['short_sem_term']);
-                        $val = $literal;
-
+                        $val = '';
 
                         if (!empty($literal)) {
                             $val = $literal->getValue();
+                        } else {
+                            $literal = $application->get($field['short_sem_term']);
+
+                            if (!empty($literal)) {
+                                $val = $literal->getUri();
+                            }
                         }
 
                         ?>

@@ -35,6 +35,22 @@ class DatasetController extends \Controller
                 ->with('datasets', $datasets);
     }
 
+    public function show($id)
+    {
+        $graph = $this->datasetRepo->get($id);
+
+        if (empty($graph)) {
+            \Redirect::to('/');
+        }
+
+        $serializer = new \EasyRdf_Serialiser_Turtle();
+
+        $turtle = $serializer->serialise($graph, 'turtle');
+
+        return \View::make('dataset.detail')
+                ->with('title', 'Detail | Linda')
+                ->with('turtle', $turtle);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -129,11 +145,10 @@ class DatasetController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -149,7 +164,7 @@ class DatasetController extends \Controller
             $adjusted_fields[] = $field;
         }
 
-        $uri = \URL::to('/' . $id);
+        $uri = \URL::to('/datasets/' . $id);
 
         $licenses = json_decode(file_get_contents('https://raw.githubusercontent.com/openknowledgebe/be-data-licenses/master/licenses.json'));
 
