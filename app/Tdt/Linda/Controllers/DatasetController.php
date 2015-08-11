@@ -23,7 +23,6 @@ class DatasetController extends \Controller
      */
     public function index()
     {
-        Auth::requirePermissions('datasets.manage');
 
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
@@ -37,8 +36,6 @@ class DatasetController extends \Controller
 
     public function show($id)
     {
-        Auth::requirePermissions('datasets.manage');
-
         $graph = $this->datasetRepo->get($id);
 
         if (empty($graph)) {
