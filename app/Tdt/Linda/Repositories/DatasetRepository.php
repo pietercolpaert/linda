@@ -175,6 +175,19 @@ class DatasetRepository
                 $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
             }
 
+            if (!empty($distribution['distributiontitle'])) {
+                $graph->addLiteral($distributionResource, 'dct:title', $distribution['distributiontitle']);
+            }
+            
+            if (!empty($distribution['downloadurl'])) {
+                $graph->addResource($distributionResource, 'dcat:downloadUrl', $distribution['downloadurl']);
+            }
+            
+            if (!empty($distribution['accessurl'])) {
+                $graph->addResource($distributionResource, 'dcat:accessUrl', $distribution['accessurl']);
+            }
+
+            
             if (!empty($distribution['usecases'])) {
                 foreach ($distribution['usecases'] as $usecase) {
                     $graph->addResource($distributionResource, 'linda:useFor', $usecase);
@@ -270,10 +283,23 @@ class DatasetRepository
             $distributionResource = $graph->resource($distr_uri);
             $distributionResource->addType('dcat:Distribution');
 
+            if (!empty($distribution['title'])) {
+                $graph->addLiteral($distributionResource, 'dct:title', $distribution['title']);
+            }
+            
+            if (!empty($distribution['downloadurl'])) {
+                $graph->addResource($distributionResource, 'dcat:downloadUrl', $distribution['downloadurl']);
+            }
+            
+            if (!empty($distribution['accessurl'])) {
+                $graph->addResource($distributionResource, 'dcat:accessUrl', $distribution['accessurl']);
+            }
+
             if (!empty($distribution['license'])) {
                 $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
             }
 
+            
             if (!empty($distribution['usecases'])) {
                 foreach ($distribution['usecases'] as $usecase) {
                     $graph->addResource($distributionResource, 'linda:useFor', $usecase);
@@ -427,18 +453,7 @@ class DatasetRepository
                 'description' => 'The description of the dataset.',
                 'domain' => 'dcat:Dataset',
                 'single_value' => true,
-            ],
-            [
-                'var_name' => 'comment',
-                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
-                'short_sem_term' => 'rdfs:comment',
-                'required' => false,
-                'type' => 'text',
-                'view_name' => 'Comment',
-                'description' => 'Additional comments on the dataset.',
-                'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
+            ]/*,
             [
                 'var_name' => 'see_also',
                 'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#seeAlso',
@@ -450,7 +465,7 @@ class DatasetRepository
                 'description' => 'Link to interesting related sources. (needs to be URIs)',
                 'domain' => 'dcat:Dataset',
                 'single_value' => false,
-            ],
+                ]*/ /*,
             [
                 'var_name' => 'score',
                 'sem_term' => 'http://semweb.mmlab.be/ns/linda#score',
@@ -464,7 +479,7 @@ class DatasetRepository
                 'description' => 'The score of a dataset.',
                 'domain' => 'dcat:Dataset',
                 'single_value' => true,
-            ],
+                ]*//*,
             [
                 'var_name' => 'recommendation',
                 'sem_term' => 'http://semweb.mmlab.be/ns/linda#recommendation',
@@ -475,7 +490,7 @@ class DatasetRepository
                 'description' => 'Small recommendations made by the researchers to make the dataset better.',
                 'domain' => 'dcat:Dataset',
                 'single_value' => true,
-            ],
+                ]*//*,
             [
                 'var_name' => 'record_comment',
                 'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
@@ -486,7 +501,7 @@ class DatasetRepository
                 'description' => 'Comment for the data record (e.g. how was this meta-data assembled).',
                 'domain' => 'dcat:CatalogRecord',
                 'single_value' => true,
-            ],
+                ]*/,
             [
                 'var_name' => 'periodicity',
                 'sem_term' => 'http://purl.org/dc/terms/accrualPeriodicity',
