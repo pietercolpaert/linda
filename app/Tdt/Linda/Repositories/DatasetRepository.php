@@ -61,7 +61,6 @@ class DatasetRepository
         );
 
         if ($cursor->hasNext()) {
-
             $jsonLd = $cursor->getNext();
             unset($jsonLd['_id']);
 
@@ -131,9 +130,9 @@ class DatasetRepository
 
         $created = time();
 
-        $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/users/' . strtolower(str_replace(" ","",$config['user']))));
+        $datarecord->addLiteral('http://purl.org/dc/terms/issued', date('c', $created));
+        $datarecord->addLiteral('http://purl.org/dc/terms/modified', date('c', $created));
+        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
@@ -219,6 +218,11 @@ class DatasetRepository
         // Add the contributor
         $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
 
+        // Adjust the modifier timestamp
+        $graph->delete($uri, 'http://purl.org/dc/terms/modified');
+
+        $graph->addLiteral($uri, 'http://purl.org/dc/terms/modified', date('c'));
+
         foreach ($this->getFields() as $field) {
             $type = $field['domain'];
 
@@ -231,7 +235,7 @@ class DatasetRepository
             $graph->delete($resource, $field['short_sem_term']);
 
             if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-                if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                if (filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
                     $graph->addResource($resource, $field['sem_term'], trim($config[$field['var_name']]));
                 } else {
                     $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
@@ -240,7 +244,7 @@ class DatasetRepository
             } elseif (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
                 if (!empty($config[$field['var_name']])) {
                     foreach ($config[$field['var_name']] as $val) {
-                        if(filter_var($val, FILTER_VALIDATE_URL)) {
+                        if (filter_var($val, FILTER_VALIDATE_URL)) {
                             $graph->addResource($resource, $field['sem_term'], $val);
                         } else {
                             $graph->add($resource, $field['sem_term'], $val);
