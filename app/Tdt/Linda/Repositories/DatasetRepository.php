@@ -21,7 +21,6 @@ class DatasetRepository
         $results = [];
 
         foreach ($cursor as $element) {
-
             unset($element['_id']);
 
             $expand = JsonLD::expand(json_encode($element));
@@ -426,65 +425,6 @@ class DatasetRepository
                 'view_name' => 'Description',
                 'description' => 'The description of the dataset.',
                 'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'comment',
-                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
-                'short_sem_term' => 'rdfs:comment',
-                'required' => false,
-                'type' => 'text',
-                'view_name' => 'Comment',
-                'description' => 'Additional comments on the dataset.',
-                'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'see_also',
-                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#seeAlso',
-                'short_sem_term' => 'rdfs:seeAlso',
-                'required' => false,
-                'type' => 'string',
-                'validation' => 'uri',
-                'view_name' => 'See Also',
-                'description' => 'Link to interesting related sources. (needs to be URIs)',
-                'domain' => 'dcat:Dataset',
-                'single_value' => false,
-            ],
-            [
-                'var_name' => 'score',
-                'sem_term' => 'http://semweb.mmlab.be/ns/linda#score',
-                'short_sem_term' => 'linda:score',
-                'required' => false,
-                'type' => 'list',
-                'values' => 'red,orange,green',
-                'key_name' => 'name',
-                'value_name' => 'value',
-                'view_name' => 'Score',
-                'description' => 'The score of a dataset.',
-                'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'recommendation',
-                'sem_term' => 'http://semweb.mmlab.be/ns/linda#recommendation',
-                'short_sem_term' => 'linda:recommendation',
-                'required' => false,
-                'type' => 'text',
-                'view_name' => 'Recommendation',
-                'description' => 'Small recommendations made by the researchers to make the dataset better.',
-                'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'record_comment',
-                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
-                'short_sem_term' => 'rdfs:comment',
-                'required' => false,
-                'type' => 'text',
-                'view_name' => 'Comment',
-                'description' => 'Comment for the data record (e.g. how was this meta-data assembled).',
-                'domain' => 'dcat:CatalogRecord',
                 'single_value' => true,
             ],
             [

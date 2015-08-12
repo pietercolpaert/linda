@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-11">
-            <h1>Edit a dataset</h1>
+            <h1>Edit an app</h1>
         </div>
     </div>
     <div class="row">
