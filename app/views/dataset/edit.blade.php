@@ -226,6 +226,21 @@
                     </div>
                 </div>
                 <div class="form-group distribution">
+                    <label for="input_title" class="col-sm-3 control-label">Title</label>
+                    <div class="col-sm-9">
+                        <?php
+                            $distTitle = $distribution->getLiteral('dc:title');
+
+                            if (!empty($distTitle)) {
+                                $distTitleVal = $distTitle->getValue();
+                            } else {
+                                $distTitleVal = null;
+                            }
+
+                        ?>
+                        <input name="distributionTitle" id="input_distributionTitle" class="form-control" value="{{ $distTitleVal }}">
+                    </div>
+
                     <label for="input_license" class="col-sm-3 control-label">License</label>
                     <div class="col-sm-9">
                         <?php
@@ -251,30 +266,34 @@
                         </select>
                     </div>
 
-                    <label for="input_usecase{{$i}}" class="col-sm-3 control-label">Usecases</label>
+                    <label for="input_accessUrl" class="col-sm-3 control-label">Access URL</label>
                     <div class="col-sm-9">
                         <?php
-                            $usecasesResources = $distribution->all('linda:useFor');
+                            $accessUrl = $distribution->getResource('dc:accessUrl');
 
-                            $usecases = [];
-
-                            if (!empty($usecasesResources)) {
-                                foreach ($usecasesResources as $usecaseResource) {
-                                    $usecases[] = $usecaseResource->getUri();
-                                }
+                            if (!empty($accessUrl)) {
+                                $accessUrlVal = $accessUrl->getUri();
+                            } else {
+                                $accessUrlVal = null;
                             }
+
                         ?>
-                        <select name="usecase{{$i}}" id="input_usecase{{$i}}" class="form-control multiSelect">
-                        <option></option>
-                        @foreach ($usecaseLinks as $usecaseLink)
-                            <?php $usecaseLink = (array)$usecaseLink; ?>
-                            @if (in_array($usecaseLink['url'], $usecases))
-                                <option value="{{ $usecaseLink['url'] }}" class="added">{{ $usecaseLink['name'] }}</option>
-                            @else
-                                <option value="{{ $usecaseLink['url'] }}" class="omitted">{{ $usecaseLink['name'] }}</option>
-                            @endif
-                        @endforeach
-                        </select>
+                        <input name="accessUrl" id="input_accessUrl" class="form-control" value="{{ $accessUrlVal }}">
+                    </div>
+
+                    <label for="input_downloadUrl" class="col-sm-3 control-label">Download URL</label>
+                    <div class="col-sm-9">
+                        <?php
+                            $downloadUrl = $distribution->getResource('dc:downloadUrl');
+
+                            if (!empty($downloadUrl)) {
+                                $downloadUrlVal = $downloadUrl->getUri();
+                            } else {
+                                $downloadUrlVal = null;
+                            }
+
+                        ?>
+                        <input name="downloadUrl" id="input_downloadUrl" class="form-control" value="{{ $downloadUrlVal }}">
                     </div>
                 </div>
                 <?php $i++; ?>

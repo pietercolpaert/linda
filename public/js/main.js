@@ -99,7 +99,7 @@ $('document').ready(function(){
 
         $('.distribution').each(function() {
 
-            var obj = {'license': '', 'usecases': []};
+            var obj = {'license': '', 'distributionTitle': '', 'accessUrl': '', 'downloadUrl' : ''};
 
             var name = $(this).attr('name');
 
@@ -107,13 +107,20 @@ $('document').ready(function(){
 
             obj['license'] = $license.find(':selected').val();
 
-            var values = [];
+            // Get the distribution title
+            var $title = $(this).find('input#input_distributionTitle');
 
-            $(this).find('div.multipleInput-container').first().find('li').each(function(){
-                values.push($(this).text());
-            });
+            obj['distributionTitle'] = $title.val();
 
-            obj['usecases'] = values;
+            // Get the distribution accessurl
+            var $accessurl = $(this).find('input#input_accessUrl');
+
+            obj['accessUrl'] = $accessurl.val();
+
+            // Get the distribution downloadurl
+            var $downloadurl = $(this).find('input#input_downloadUrl');
+
+            obj['downloadUrl'] = $downloadurl.val();
 
             data['distributions'].push(obj);
         });
@@ -212,7 +219,7 @@ $('document').ready(function(){
 
         $('.distribution').each(function() {
 
-            var obj = {'license': '', 'usecases': []};
+            var obj = {'license': '', 'distributionTitle': '', 'accessUrl': '', 'downloadUrl' : ''};
 
             var name = $(this).attr('name');
 
@@ -220,13 +227,20 @@ $('document').ready(function(){
 
             obj['license'] = $license.find(':selected').val();
 
-            var values = [];
+            // Get the distribution title
+            var $title = $(this).find('input#input_distributionTitle');
 
-            $(this).find('div.multipleInput-container').first().find('li').each(function(){
-                values.push($(this).text());
-            });
+            obj['distributionTitle'] = $title.val();
 
-            obj['usecases'] = values;
+            // Get the distribution accessurl
+            var $accessurl = $(this).find('input#input_accessUrl');
+
+            obj['accessUrl'] = $accessurl.val();
+
+            // Get the distribution downloadurl
+            var $downloadurl = $(this).find('input#input_downloadUrl');
+
+            obj['downloadUrl'] = $downloadurl.val();
 
             data['distributions'].push(obj);
         });

@@ -162,7 +162,6 @@ class DatasetRepository
 
         // Add the distribution resource
         foreach ($config['distributions'] as $distribution) {
-
             $id = $this->getIncrementalId();
 
             $distr_uri = $uri . '#distribution' . $id;
@@ -170,14 +169,16 @@ class DatasetRepository
             $distributionResource = $graph->resource($distr_uri);
             $distributionResource->addType('dcat:Distribution');
 
-            if (!empty($distribution['license'])) {
-                $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
+            $urls = ['license', 'accessUrl', 'downloadUrl'];
+
+            foreach ($urls as $url) {
+                if (!empty($distribution[$url]) && filter_var($distribution[$url], FILTER_VALIDATE_URL)) {
+                    $graph->addResource($distributionResource, 'dct:' . $url, $distribution[$url]);
+                }
             }
 
-            if (!empty($distribution['usecases'])) {
-                foreach ($distribution['usecases'] as $usecase) {
-                    $graph->addResource($distributionResource, 'linda:useFor', $usecase);
-                }
+            if (!empty($distribution['distributionTitle'])) {
+                $graph->addLiteral($distributionResource, 'dct:title', $distribution['distributionTitle']);
             }
 
             // Add the distribution to the dataset
@@ -216,30 +217,27 @@ class DatasetRepository
         }
 
         // Add the contributor
-        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ","",$config['user']))));
+        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
 
         foreach ($this->getFields() as $field) {
-
             $type = $field['domain'];
 
             if ($type == 'dcat:Dataset') {
                 $resource = $graph->resource($uri . "#dataset");
-            } else if ($type == 'dcat:CatalogRecord') {
+            } elseif ($type == 'dcat:CatalogRecord') {
                 $resource = $graph->resource($uri);
             }
 
             $graph->delete($resource, $field['short_sem_term']);
 
             if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-
                 if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
                     $graph->addResource($resource, $field['sem_term'], trim($config[$field['var_name']]));
                 } else {
                     $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
                 }
 
-            } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
+            } elseif (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
                 if (!empty($config[$field['var_name']])) {
                     foreach ($config[$field['var_name']] as $val) {
                         if(filter_var($val, FILTER_VALIDATE_URL)) {
@@ -253,7 +251,6 @@ class DatasetRepository
         }
 
         foreach ($graph->allOfType('dcat:Distribution') as $distribution) {
-
             $resource = $graph->resource($uri . "#dataset");
 
             $graph->deleteResource($resource, 'dcat:distribution', $distribution->getUri());
@@ -261,7 +258,6 @@ class DatasetRepository
 
         // Add the distribution resource
         foreach ($config['distributions'] as $distribution) {
-
             $id = $this->getIncrementalId();
 
             $distr_uri = $uri . '#distribution' . $id;
@@ -269,14 +265,16 @@ class DatasetRepository
             $distributionResource = $graph->resource($distr_uri);
             $distributionResource->addType('dcat:Distribution');
 
-            if (!empty($distribution['license'])) {
-                $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
+            $urls = ['license', 'accessUrl', 'downloadUrl'];
+
+            foreach ($urls as $url) {
+                if (!empty($distribution[$url]) && filter_var($distribution[$url], FILTER_VALIDATE_URL)) {
+                    $graph->addResource($distributionResource, 'dct:' . $url, $distribution[$url]);
+                }
             }
 
-            if (!empty($distribution['usecases'])) {
-                foreach ($distribution['usecases'] as $usecase) {
-                    $graph->addResource($distributionResource, 'linda:useFor', $usecase);
-                }
+            if (!empty($distribution['distributionTitle'])) {
+                $graph->addLiteral($distributionResource, 'dct:title', $distribution['distributionTitle']);
             }
 
             // Add the distribution to the dataset

@@ -9,13 +9,6 @@ $('document').ready(function() {
         });
     });
 
-    // Fetch the use cases
-    var usecases = [];
-
-    $.getJSON(window.location.origin + '/lists/usecases', function (data) {
-        usecases = data;
-    });
-
     // Use the document on click, we need to catch the event on auto-generated clicks
     $(document).on('click', '.btn-remove-distribution', function(e) {
 
@@ -35,6 +28,23 @@ $('document').ready(function() {
 
         var $distribution = $('div#distributions');
         var $form = $('<div class="form-group distribution"></div>');
+
+        // Add the title
+        var $inputContainer = $('<div class="col-sm-9"></div>');
+
+        var $label = $('<label name="distributionTitle" for="input_distributionTitle" class="col-sm-3 control-label">Title</label>');
+
+        $label.appendTo($form);
+
+        $form.appendTo($distribution);
+
+        $inputContainer.appendTo($form);
+
+        var $inputTitle = $('<input name="distributionTitle" id="input_distributionTitle" class="form-control"></select>').append('<option></option>');
+
+        $inputTitle.appendTo($inputContainer);
+
+        // Add the licenses
         var $inputContainer = $('<div class="col-sm-9"></div>');
 
         var $label = $('<label for="input_license" class="col-sm-3 control-label">License</label>');
@@ -66,11 +76,10 @@ $('document').ready(function() {
 
         $selectLicense.appendTo($inputContainer);
 
-
-        // Add the multiple input usecases
+        // Add the accessURL
         var $inputContainer = $('<div class="col-sm-9"></div>');
 
-        var $label = $('<label name="usecase" for="input_usecase" class="col-sm-3 control-label">Usecases</label>');
+        var $label = $('<label name="accessUrl" for="input_accessUrl" class="col-sm-3 control-label">Access URL</label>');
 
         $label.appendTo($form);
 
@@ -78,14 +87,23 @@ $('document').ready(function() {
 
         $inputContainer.appendTo($form);
 
-        var $selectUsecase = $('<select name="usecase" id="input_usecase" class="form-control"></select>').append('<option></option>');
+        var $accessUrl = $('<input name="accessUrl" id="input_accessUrl" class="form-control"></select>').append('<option></option>');
 
-        $.each(usecases, function (key, val) {
-            $selectUsecase.append('<option value="' + val.url + '" class="omitted">' + val.name + "</option>");
-        });
+        $accessUrl.appendTo($inputContainer);
 
-        $selectUsecase.appendTo($inputContainer);
-        $selectUsecase.multipleSelect();
+        // Add the downloadURL
+        var $inputContainer = $('<div class="col-sm-9"></div>');
 
+        var $label = $('<label name="downloadUrl" for="input_downloadUrl" class="col-sm-3 control-label">Download URL</label>');
+
+        $label.appendTo($form);
+
+        $form.appendTo($distribution);
+
+        $inputContainer.appendTo($form);
+
+        var $downloadURL = $('<input name="downloadUrl" id="input_downloadUrl" class="form-control"></select>').append('<option></option>');
+
+        $downloadURL.appendTo($inputContainer);
     });
 });

@@ -167,14 +167,11 @@ class DatasetController extends \Controller
 
         $licenses = json_decode(file_get_contents('https://raw.githubusercontent.com/openknowledgebe/be-data-licenses/master/licenses.json'));
 
-        $usecaseLinks = json_decode($this->getDocument(\URL::to('lists/usecases')));
-
         return \View::make('dataset.edit')
                 ->with('title', 'Edit | Linda')
                 ->with('dataset', $dataset)
                 ->with('fields', $adjusted_fields)
                 ->with('licenses', $licenses)
-                ->with('usecaseLinks', $usecaseLinks)
                 ->with('uri', $uri);
     }
 
