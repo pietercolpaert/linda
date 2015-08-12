@@ -6,7 +6,7 @@
 
                var name = $(this).attr('name');
 
-               // create html elements
+               // Create html elements
                $list = $('<ul id="' + name + '"/>');
 
                // If there are already values in there, add them to the custom input control
@@ -26,12 +26,12 @@
                     }
                });
 
-               // input
+               // Input field
                var $input = $('<input id="' + name + '" class="form-control" type="text" />').keyup(function(event) {
 
                     if(event.which == 13) {
                          event.preventDefault();
-                         // key press is Enter
+                         // Key press is Enter
                          var val = $(this).val();
 
                          var $container = event.target.closest('div');
@@ -81,27 +81,17 @@
                // If there are already values in there, add them to the custom input control
                var $added = $('#input_' + name + ' option.added');
 
-               $added.each(function() {
-                    $list.append($('<li class="multipleInput"><span>' + $(this).attr("value") + '</span></li>')
-                         .append($('<a href="#" class="fa fa-times icon-only" title="Remove" />')
-                              .click(function(e) {
-                                   $(this).parent().remove();
-                                   e.preventDefault();
-                              })
-                              )
-                         );
-               });
-
-               // input
+               // Bind the events to the dropdown select
                var $input = $('<select id="' + name + '" class="form-control" type="text" />').on('change', function (event) {
 
                     var val = $(this).val();
+                    var name = $(this).text();
 
                     var $container = event.target.closest('div');
 
                     $list = $($container.firstChild);
 
-                    $list.append($('<li class="multipleInput"><span>' + val + '</span></li>')
+                    $list.append($('<li class="multipleInput" value="' + val + '"><span>' + name + '</span></li>')
                          .append($('<a href="#" class="fa fa-times icon-only" title="Remove" />')
                               .click(function(e) {
                                    $(this).parent().remove();
@@ -115,6 +105,24 @@
 
                });
 
+               $added.each(function() {
+
+                    var optionVal = $(this).attr("value");
+                    var optionName = $(this).text();
+
+                    $list.append($('<li class="multipleInput" value="' + optionVal  + '""><span>' + optionName + '</span></li>')
+                         .append($('<a href="#" class="fa fa-times icon-only" title="Remove" />')
+                              .click(function(e) {
+                                   $(this).parent().remove();
+
+                                   // Re-add the option to the list
+                                   $input.append('<option value="' + optionVal + '" class="omitted">' + optionName + '</option>');
+                                   e.preventDefault();
+                              })
+                              )
+                         );
+               });
+
                $input.append('<option></option>');
 
                $omitted = $('#input_' + name + ' option.omitted');
@@ -123,12 +131,12 @@
                     $input.append($(this));
                });
 
-               // container div
+               // Container div
                var $container = $('<div id="' + name + '" class="multipleInput-container" />').click(function() {
                     $input.focus();
                });
 
-               // insert elements into DOM
+               // Insert elements into DOM
                $container.append($list).append($input).insertAfter($(this));
 
                return $(this).hide();

@@ -33,24 +33,23 @@ class ListsController extends \Controller
             $datasets = $this->lists;
             return $this->lists;
         } else {
-
             $seed_data_path = app_path() . '/database/seeds/data/';
 
             $name = '';
 
             if ($list == 'frequency') {
                 $name = 'frequencies.json';
-            } else if ($list == 'usecases') {
+            } elseif ($list == 'usecases') {
                 return $this->createUsecaseList();
-            } else if ($list == 'agents') {
+            } elseif ($list == 'agents') {
                 $name = 'agentTypes.json';
-            } else if ($list == 'apps') {
+            } elseif ($list == 'apps') {
                 $name = 'appTypes.json';
-            } else if ($list == 'geo') {
+            } elseif ($list == 'geo') {
                 $name = 'geonames.json';
-            } else if ($list == 'datasets') {
+            } elseif ($list == 'datasets') {
                 return $this->createDatasetList();
-            } else if ($list == 'users') {
+            } elseif ($list == 'users') {
                 return $this->createUserList();
             } else {
                 return \Redirect::to('/');
@@ -70,7 +69,6 @@ class ListsController extends \Controller
         $datasets = [];
 
         foreach ($datasetGraphs as $datasetGraph) {
-
             $datasetResource = $datasetGraph->allOfType('dcat:Dataset');
 
             // There's always only one in the graph
@@ -79,7 +77,7 @@ class ListsController extends \Controller
             $uri = $datasetResource->getUri();
             $title = $datasetResource->getLiteral('dc:title')->getValue();
 
-            $dataset = [ 'name' => $title . ' - ' . $uri, 'url' => $uri];
+            $dataset = [ 'name' => $title, 'url' => $uri];
 
             $datasets[] = $dataset;
         }
@@ -96,7 +94,6 @@ class ListsController extends \Controller
         $users = [];
 
         foreach ($userResources as $userResource) {
-
             $userResource = $userResource->allOfType('foaf:Agent');
 
             // There's always only one in the graph

@@ -67,11 +67,10 @@ class AppController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -147,11 +146,10 @@ class AppController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];

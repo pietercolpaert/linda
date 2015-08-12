@@ -89,7 +89,7 @@ $('document').ready(function(){
             var values = [];
 
             $(this).next('div.multipleInput-container').first().find('li').each(function(){
-                values.push($(this).text());
+                values.push($(this).attr('value'));
             });
 
             data[name] = values;
@@ -202,7 +202,7 @@ $('document').ready(function(){
             var name = $(this).attr('name');
             var values = [];
             $(this).next('div.multipleInput-container').first().find('li').each(function(){
-                values.push($(this).text());
+                values.push($(this).attr('value'));
             });
 
             data[name] = values;
