@@ -91,7 +91,7 @@
                 <label class="col-sm-2 control-label">
                 </label>
                 <div class="col-sm-10">
-                <h4>Additional meta-data</h4>
+                <!--<h4>Additional meta-data</h4>-->
                 </div>
             </div>
             <div class="form-group">

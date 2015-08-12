@@ -37,7 +37,7 @@ $('document').ready(function() {
         var $form = $('<div class="form-group distribution"></div>');
         var $inputContainer = $('<div class="col-sm-9"></div>');
 
-        var $label = $('<label for="input_license" class="col-sm-3 control-label">License</label>');
+        var $label = $('');
 
         var html = '<label class="col-sm-2 control-label"></label>\
                     <div class="col-sm-8">\
@@ -52,40 +52,24 @@ $('document').ready(function() {
 
         $header.appendTo($distribution);
 
-        $label.appendTo($form);
-
         $form.appendTo($distribution);
 
         $inputContainer.appendTo($form);
+        var $inputTitle = $('<label for="input_distributiontitle" class="col-sm-9 control-label">Title</label><input type="text" hint="Distribution title" name="distributiontitle" id="input_distributiontitle" class="form-control"/>');
 
+        var $inputDownloadUrl = $('<label for="input_downloadurl" class="col-sm-9 control-label">Direct download url, if exists</label><input type="text" hint="Download url" name="downloadurl" id="input_downloadurl" class="form-control"/>');
+        var $inputAccessUrl = $('<label for="input_accessurl" class="col-sm-9 control-label">Link to a page where I can get download instructions</label><input type="text" hint="Access url" name="accessurl" id="input_accessurl" class="form-control"/>');
+        $inputTitle.appendTo($inputContainer);
+        $inputDownloadUrl.appendTo($inputContainer);
+        $inputAccessUrl.appendTo($inputContainer);
+        var $licenseLabel = $('<label for="input_license" class="col-sm-9 control-label">License</label>');
         var $selectLicense = $('<select name="license" id="input_license" class="form-control"></select>').append('<option></option>');
 
         $.each(licenses, function (key, val) {
             $selectLicense.append('<option value="' + val.url + '">' + val.name + "</option>");
         });
-
+        $licenseLabel.appendTo($inputContainer);
         $selectLicense.appendTo($inputContainer);
-
-
-        // Add the multiple input usecases
-        var $inputContainer = $('<div class="col-sm-9"></div>');
-
-        var $label = $('<label name="usecase" for="input_usecase" class="col-sm-3 control-label">Usecases</label>');
-
-        $label.appendTo($form);
-
-        $form.appendTo($distribution);
-
-        $inputContainer.appendTo($form);
-
-        var $selectUsecase = $('<select name="usecase" id="input_usecase" class="form-control"></select>').append('<option></option>');
-
-        $.each(usecases, function (key, val) {
-            $selectUsecase.append('<option value="' + val.url + '" class="omitted">' + val.name + "</option>");
-        });
-
-        $selectUsecase.appendTo($inputContainer);
-        $selectUsecase.multipleSelect();
-
+      
     });
 });
