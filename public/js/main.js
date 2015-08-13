@@ -99,7 +99,7 @@ $('document').ready(function(){
 
         $('.distribution').each(function() {
 
-            var obj = {'license': '', 'distributionTitle': '', 'accessUrl': '', 'downloadUrl' : ''};
+            var obj = {'license': '', 'distributionTitle': '', 'accessURL': '', 'downloadURL' : ''};
 
             var name = $(this).attr('name');
 
@@ -113,14 +113,14 @@ $('document').ready(function(){
             obj['distributionTitle'] = $title.val();
 
             // Get the distribution accessurl
-            var $accessurl = $(this).find('input#input_accessUrl');
+            var $accessurl = $(this).find('input#input_accessURL');
 
-            obj['accessUrl'] = $accessurl.val();
+            obj['accessURL'] = $accessurl.val();
 
             // Get the distribution downloadurl
-            var $downloadurl = $(this).find('input#input_downloadUrl');
+            var $downloadurl = $(this).find('input#input_downloadURL');
 
-            obj['downloadUrl'] = $downloadurl.val();
+            obj['downloadURL'] = $downloadurl.val();
 
             data['distributions'].push(obj);
         });
@@ -219,7 +219,7 @@ $('document').ready(function(){
 
         $('.distribution').each(function() {
 
-            var obj = {'license': '', 'distributionTitle': '', 'accessUrl': '', 'downloadUrl' : ''};
+            var obj = {'license': '', 'distributionTitle': '', 'accessURL': '', 'downloadURL' : ''};
 
             var name = $(this).attr('name');
 
@@ -233,14 +233,14 @@ $('document').ready(function(){
             obj['distributionTitle'] = $title.val();
 
             // Get the distribution accessurl
-            var $accessurl = $(this).find('input#input_accessUrl');
+            var $accessurl = $(this).find('input#input_accessURL');
 
-            obj['accessUrl'] = $accessurl.val();
+            obj['accessURL'] = $accessurl.val();
 
             // Get the distribution downloadurl
-            var $downloadurl = $(this).find('input#input_downloadUrl');
+            var $downloadurl = $(this).find('input#input_downloadURL');
 
-            obj['downloadUrl'] = $downloadurl.val();
+            obj['downloadURL'] = $downloadurl.val();
 
             data['distributions'].push(obj);
         });
@@ -255,7 +255,6 @@ $('document').ready(function(){
             headers: {
                 'Accept' : 'application/json',
                 'Content-Type': 'application/json'
-                //'Authorization': authHeader
             },
             success: function(e){
                 // Done, redirect to datets page

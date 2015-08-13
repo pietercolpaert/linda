@@ -96,8 +96,28 @@ class DatasetRepository
 
         $context = $this->getContext();
 
-        // Add the dataset resource
+        $graph = $this->createGraph($uri, $config);
 
+        $serializer = new \EasyRdf_Serialiser_JsonLd();
+
+        $jsonld = $serializer->serialise($graph, 'jsonld');
+
+        $compact_document = (array)JsonLD::compact($jsonld, $context);
+
+        $collection = $this->getMongoCollection();
+        $collection->insert($compact_document);
+    }
+
+    /**
+     * Create a new graph
+     *
+     * @param $uri    string The URI of the dataset
+     * @param $config array  The configuration that makes up the new graph
+     *
+     * @return \EasyRdf_Graph
+     */
+    private function createGraph($uri, $config)
+    {
         $graph = new \EasyRdf_Graph();
         $dataset = $graph->resource($uri . '#dataset');
         $dataset->addType('dcat:Dataset');
@@ -116,12 +136,6 @@ class DatasetRepository
                 }
             }
         }
-
-        $serializer = new \EasyRdf_Serialiser_JsonLd();
-
-        $jsonld = $serializer->serialise($graph, 'jsonld');
-
-        $compact_document = (array)JsonLD::compact($jsonld, $context);
 
         // Add the datarecord resource
 
@@ -168,11 +182,15 @@ class DatasetRepository
             $distributionResource = $graph->resource($distr_uri);
             $distributionResource->addType('dcat:Distribution');
 
-            $urls = ['license', 'accessUrl', 'downloadUrl'];
+            $urls = ['license', 'accessURL', 'downloadURL'];
 
             foreach ($urls as $url) {
                 if (!empty($distribution[$url]) && filter_var($distribution[$url], FILTER_VALIDATE_URL)) {
-                    $graph->addResource($distributionResource, 'dct:' . $url, $distribution[$url]);
+                    if ($url == 'license') {
+                        $graph->addResource($distributionResource, 'dct:' . $url, $distribution[$url]);
+                    } else {
+                        $graph->addResource($distributionResource, 'dcat:' . $url, $distribution[$url]);
+                    }
                 }
             }
 
@@ -184,14 +202,7 @@ class DatasetRepository
             $graph->addResource($dataset, 'dcat:distribution', $distr_uri);
         }
 
-        $serializer = new \EasyRdf_Serialiser_JsonLd();
-
-        $jsonld = $serializer->serialise($graph, 'jsonld');
-
-        $compact_document = (array)JsonLD::compact($jsonld, $context);
-
-        $collection = $this->getMongoCollection();
-        $collection->insert($compact_document);
+        return $graph;
     }
 
     /**
@@ -215,6 +226,8 @@ class DatasetRepository
             return null;
         }
 
+        $graph = $this->createGraph($uri, $config);
+
         // Add the contributor
         $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
 
@@ -222,68 +235,6 @@ class DatasetRepository
         $graph->delete($uri, 'http://purl.org/dc/terms/modified');
 
         $graph->addLiteral($uri, 'http://purl.org/dc/terms/modified', date('c'));
-
-        foreach ($this->getFields() as $field) {
-            $type = $field['domain'];
-
-            if ($type == 'dcat:Dataset') {
-                $resource = $graph->resource($uri . "#dataset");
-            } elseif ($type == 'dcat:CatalogRecord') {
-                $resource = $graph->resource($uri);
-            }
-
-            $graph->delete($resource, $field['short_sem_term']);
-
-            if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-                if (filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
-                    $graph->addResource($resource, $field['sem_term'], trim($config[$field['var_name']]));
-                } else {
-                    $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
-                }
-
-            } elseif (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-                if (!empty($config[$field['var_name']])) {
-                    foreach ($config[$field['var_name']] as $val) {
-                        if (filter_var($val, FILTER_VALIDATE_URL)) {
-                            $graph->addResource($resource, $field['sem_term'], $val);
-                        } else {
-                            $graph->add($resource, $field['sem_term'], $val);
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($graph->allOfType('dcat:Distribution') as $distribution) {
-            $resource = $graph->resource($uri . "#dataset");
-
-            $graph->deleteResource($resource, 'dcat:distribution', $distribution->getUri());
-        }
-
-        // Add the distribution resource
-        foreach ($config['distributions'] as $distribution) {
-            $id = $this->getIncrementalId();
-
-            $distr_uri = $uri . '#distribution' . $id;
-
-            $distributionResource = $graph->resource($distr_uri);
-            $distributionResource->addType('dcat:Distribution');
-
-            $urls = ['license', 'accessUrl', 'downloadUrl'];
-
-            foreach ($urls as $url) {
-                if (!empty($distribution[$url]) && filter_var($distribution[$url], FILTER_VALIDATE_URL)) {
-                    $graph->addResource($distributionResource, 'dct:' . $url, $distribution[$url]);
-                }
-            }
-
-            if (!empty($distribution['distributionTitle'])) {
-                $graph->addLiteral($distributionResource, 'dct:title', $distribution['distributionTitle']);
-            }
-
-            // Add the distribution to the dataset
-            $graph->addResource($uri . "#dataset", 'dcat:distribution', $distr_uri);
-        }
 
         // Delete the json entry and replace it with the updated one
         $collection = $this->getMongoCollection();

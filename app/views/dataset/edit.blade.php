@@ -108,7 +108,7 @@
                         ?>
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @elseif($field['type'] == 'list')
-                         <?php
+                        <?php
 
                         $literal = $datasetResource->getLiteral($field['short_sem_term']);
                         $val = $literal;
@@ -229,13 +229,13 @@
                     <label for="input_title" class="col-sm-3 control-label">Title</label>
                     <div class="col-sm-9">
                         <?php
-                            $distTitle = $distribution->getLiteral('dc:title');
+                        $distTitle = $distribution->getLiteral('dc:title');
 
-                            if (!empty($distTitle)) {
-                                $distTitleVal = $distTitle->getValue();
-                            } else {
-                                $distTitleVal = null;
-                            }
+                        if (!empty($distTitle)) {
+                            $distTitleVal = $distTitle->getValue();
+                        } else {
+                            $distTitleVal = null;
+                        }
 
                         ?>
                         <input name="distributionTitle" id="input_distributionTitle" class="form-control" value="{{ $distTitleVal }}">
@@ -244,13 +244,13 @@
                     <label for="input_license" class="col-sm-3 control-label">License</label>
                     <div class="col-sm-9">
                         <?php
-                            $license = $distribution->getResource('dc:license');
+                        $license = $distribution->getResource('dc:license');
 
-                            if (!empty($license)) {
-                                $licenseVal = $license->getUri();
-                            } else {
-                                $licenseVal = null;
-                            }
+                        if (!empty($license)) {
+                            $licenseVal = $license->getUri();
+                        } else {
+                            $licenseVal = null;
+                        }
 
                         ?>
                         <select name="license" id="input_license" class="form-control">
@@ -266,34 +266,34 @@
                         </select>
                     </div>
 
-                    <label for="input_accessUrl" class="col-sm-3 control-label">Access URL</label>
+                    <label for="input_accessURL" class="col-sm-3 control-label">Access URL</label>
                     <div class="col-sm-9">
                         <?php
-                            $accessUrl = $distribution->getResource('dc:accessUrl');
+                        $accessURL = $distribution->getResource('dcat:accessURL');
 
-                            if (!empty($accessUrl)) {
-                                $accessUrlVal = $accessUrl->getUri();
-                            } else {
-                                $accessUrlVal = null;
-                            }
+                        $accessURLVal = null;
+
+                        if (!empty($accessURL)) {
+                            $accessURLVal = $accessURL->getUri();
+                        }
 
                         ?>
-                        <input name="accessUrl" id="input_accessUrl" class="form-control" value="{{ $accessUrlVal }}">
+                        <input name="accessURL" id="input_accessURL" class="form-control" value="{{ $accessURLVal }}">
                     </div>
 
-                    <label for="input_downloadUrl" class="col-sm-3 control-label">Download URL</label>
+                    <label for="input_downloadURL" class="col-sm-3 control-label">Download URL</label>
                     <div class="col-sm-9">
                         <?php
-                            $downloadUrl = $distribution->getResource('dc:downloadUrl');
+                        $downloadURL = $distribution->getResource('dcat:downloadURL');
 
-                            if (!empty($downloadUrl)) {
-                                $downloadUrlVal = $downloadUrl->getUri();
-                            } else {
-                                $downloadUrlVal = null;
-                            }
+                        $downloadURLVal = null;
+
+                        if (!empty($downloadURL)) {
+                            $downloadURLVal = $downloadURL->getUri();
+                        }
 
                         ?>
-                        <input name="downloadUrl" id="input_downloadUrl" class="form-control" value="{{ $downloadUrlVal }}">
+                        <input name="downloadURL" id="input_downloadURL" class="form-control" value="{{ $downloadURLVal }}">
                     </div>
                 </div>
                 <?php $i++; ?>

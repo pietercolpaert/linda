@@ -79,7 +79,7 @@ $('document').ready(function() {
         // Add the accessURL
         var $inputContainer = $('<div class="col-sm-9"></div>');
 
-        var $label = $('<label name="accessUrl" for="input_accessUrl" class="col-sm-3 control-label">Access URL</label>');
+        var $label = $('<label name="accessURL" for="input_accessURL" class="col-sm-3 control-label">Access URL</label>');
 
         $label.appendTo($form);
 
@@ -87,14 +87,14 @@ $('document').ready(function() {
 
         $inputContainer.appendTo($form);
 
-        var $accessUrl = $('<input name="accessUrl" id="input_accessUrl" class="form-control"></select>').append('<option></option>');
+        var $accessURL = $('<input name="accessURL" id="input_accessURL" class="form-control"></select>').append('<option></option>');
 
-        $accessUrl.appendTo($inputContainer);
+        $accessURL.appendTo($inputContainer);
 
         // Add the downloadURL
         var $inputContainer = $('<div class="col-sm-9"></div>');
 
-        var $label = $('<label name="downloadUrl" for="input_downloadUrl" class="col-sm-3 control-label">Download URL</label>');
+        var $label = $('<label name="downloadURL" for="input_downloadURL" class="col-sm-3 control-label">Download URL</label>');
 
         $label.appendTo($form);
 
@@ -102,7 +102,7 @@ $('document').ready(function() {
 
         $inputContainer.appendTo($form);
 
-        var $downloadURL = $('<input name="downloadUrl" id="input_downloadUrl" class="form-control"></select>').append('<option></option>');
+        var $downloadURL = $('<input name="downloadURL" id="input_downloadURL" class="form-control"></select>').append('<option></option>');
 
         $downloadURL.appendTo($inputContainer);
     });
