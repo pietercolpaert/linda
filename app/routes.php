@@ -20,6 +20,8 @@ Route::get('lists/{list?}', 'Tdt\Linda\Controllers\ListsController@index')
 Route::resource('datasets', 'Tdt\Linda\Controllers\DatasetController');
 Route::resource('apps', 'Tdt\Linda\Controllers\AppController');
 Route::resource('organizations', 'Tdt\Linda\Controllers\UserController');
+Route::get('users/{id?}', 'Tdt\Linda\Controllers\UserController@derefUser')
+->where('id', '[0-9]+');
 
 // Auth
 Route::get('login', 'Tdt\Linda\Controllers\AuthController@getLogin');

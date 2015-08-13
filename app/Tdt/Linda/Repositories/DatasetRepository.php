@@ -226,22 +226,33 @@ class DatasetRepository
             return null;
         }
 
-        $graph = $this->createGraph($uri, $config);
+        $newGraph = $this->createGraph($uri, $config);
 
         // Add the contributor
-        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
+        $newGraph->addResource($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
 
         // Adjust the modifier timestamp
-        $graph->delete($uri, 'http://purl.org/dc/terms/modified');
+        $newGraph->delete($uri, 'http://purl.org/dc/terms/issued');
 
-        $graph->addLiteral($uri, 'http://purl.org/dc/terms/modified', date('c'));
+        $newGraph->addLiteral($uri, 'http://purl.org/dc/terms/issued', $graph->getLiteral($uri, 'dc:issued')->getValue());
+        $newGraph->addLiteral($uri, 'http://purl.org/dc/terms/modified', date('c'));
+
+        $newGraph->delete($uri, 'http://purl.org/dc/terms/creator');
+
+        $newGraph->addResource($uri, 'http://purl.org/dc/terms/creator', $graph->getResource($uri, 'dc:creator')->getUri());
+
+        $contributors = $graph->all($uri, 'dc:contributor');
+
+        foreach ($contributors as $contributor) {
+            $newGraph->addResource($uri, 'http://purl.org/dc/terms/contributor', $contributor->getUri());
+        }
 
         // Delete the json entry and replace it with the updated one
         $collection = $this->getMongoCollection();
 
         $serializer = new \EasyRdf_Serialiser_JsonLd();
 
-        $jsonld = $serializer->serialise($graph, 'jsonld');
+        $jsonld = $serializer->serialise($newGraph, 'jsonld');
 
         $compact_document = (array)JsonLD::compact($jsonld, $context);
 

@@ -21,7 +21,6 @@ class UserController extends \Illuminate\Routing\Controller
      */
     public function index()
     {
-
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
 
@@ -34,7 +33,6 @@ class UserController extends \Illuminate\Routing\Controller
 
     public function show($id)
     {
-
         $graph = $this->userRepo->get($id . '#agent');
 
         if (is_array($graph)) {
@@ -202,6 +200,42 @@ class UserController extends \Illuminate\Routing\Controller
         Auth::requirePermissions('users.manage');
 
         $this->userRepo->delete($id);
+    }
+
+    /**
+     * Dereference a user
+     *
+     * @param $id integer The id of the user
+     *
+     * @return Response
+     */
+    public function derefUser($id = null)
+    {
+        if (empty($id)) {
+            return Redirect::to('/');
+        }
+
+        $userM = \Sentry::findUserById($id);
+
+        if (empty($userM)) {
+            \App::abort(404, 'The user could not be found.');
+        }
+
+        $graph = new \EasyRdf_Graph();
+
+        $userR = $graph->resource(\URL::to('/users/' . $id));
+
+        $userR->addLiteral('foaf:firstName', $userM['first_name']);
+        $userR->addLiteral('foaf:lastName', $userM['last_name']);
+        $userR->addLiteral('foaf:mbox', $userM['email']);
+
+        $serializer = new \EasyRdf_Serialiser_Turtle();
+
+        $turtle = $serializer->serialise($graph, 'turtle');
+
+        return \View::make('user.detail')
+                ->with('title', 'Detail | Linda')
+                ->with('turtle', $turtle);
     }
 
     private function getDocument($uri)

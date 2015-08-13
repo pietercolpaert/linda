@@ -71,7 +71,6 @@ class DatasetController extends \Controller
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -106,7 +105,7 @@ class DatasetController extends \Controller
 
         // Add current user
         $user = \Sentry::getUser()->toArray();
-        $input['user'] = $user['email'];
+        $input['user'] = $user['id'];
 
         $rules = $this->datasetRepo->getRules();
 
@@ -190,7 +189,7 @@ class DatasetController extends \Controller
 
         // Add current user
         $user = \Sentry::getUser()->toArray();
-        $input['user'] = $user['first_name'];
+        $input['user'] = $user['id'];
 
         $rules = $this->datasetRepo->getRules();
 
