@@ -19,7 +19,7 @@ Route::get('lists/{list?}', 'Tdt\Linda\Controllers\ListsController@index')
 // Datasets and Apps
 Route::resource('datasets', 'Tdt\Linda\Controllers\DatasetController');
 Route::resource('apps', 'Tdt\Linda\Controllers\AppController');
-Route::resource('users', 'Tdt\Linda\Controllers\UserController');
+Route::resource('organizations', 'Tdt\Linda\Controllers\UserController');
 
 // Auth
 Route::get('login', 'Tdt\Linda\Controllers\AuthController@getLogin');
@@ -39,14 +39,12 @@ App::error(function ($exception, $code) {
     $mimes = explode(',', $accept_header);
 
         // Create HTML response, seperate templates for status codes
-    switch ($code)
-    {
+    switch ($code) {
         case 404:
-        return Response::view('error.404', array('exception' => $exception, 'title' => 'Oops'), 404);
+            return Response::view('error.404', array('exception' => $exception, 'title' => 'Oops'), 404);
         case 500:
-        return Response::view('error.404', array('exception' => $exception, 'title' => 'Oops'), 500);
+            return Response::view('error.404', array('exception' => $exception, 'title' => 'Oops'), 500);
         default:
-        return Response::view('error.404', array('exception' => $exception, 'title' => 'Oops'), 400);
+            return Response::view('error.404', array('exception' => $exception, 'title' => 'Oops'), 400);
     }
-
 });

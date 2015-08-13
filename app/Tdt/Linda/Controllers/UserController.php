@@ -66,11 +66,10 @@ class UserController extends \Illuminate\Routing\Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -87,7 +86,7 @@ class UserController extends \Illuminate\Routing\Controller
         }
 
         return \View::make('user.create')
-                    ->with('title', 'Add a user')
+                    ->with('title', 'Add an organization')
                     ->with(['fields' => $adjusted_fields]);
     }
 
@@ -139,11 +138,10 @@ class UserController extends \Illuminate\Routing\Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -159,10 +157,10 @@ class UserController extends \Illuminate\Routing\Controller
             $adjusted_fields[] = $field;
         }
 
-        $uri = \URL::to('/users/' . $id);
+        $uri = \URL::to('/organizations/' . $id);
 
         return \View::make('user.edit')
-                ->with('title', 'Edit a user| Linda')
+                ->with('title', 'Edit an organization| Linda')
                 ->with('user', $user)
                 ->with('fields', $adjusted_fields)
                 ->with('uri', $uri);

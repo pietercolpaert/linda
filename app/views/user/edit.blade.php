@@ -5,7 +5,7 @@
 <div class="container">
     <div class="row">
         <div class="col-sm-11">
-            <h1>Edit a user</h1>
+            <h1>Edit an organization</h1>
         </div>
     </div>
     <div class="row">
@@ -24,7 +24,7 @@
                     <label class="col-sm-2 control-label">
                     </label>
                     <div class="col-sm-10">
-                        <h4>User required meta-data</h4>
+                        <h4>Required meta-data</h4>
                     </div>
                 </div>
                 <?php
@@ -58,7 +58,7 @@
                     <label class="col-sm-2 control-label">
                     </label>
                     <div class="col-sm-10">
-                        <h4>User optional meta-data</h4>
+                        <h4>Optional meta-data</h4>
                     </div>
                 </div>
                 <div class="form-group">
@@ -106,26 +106,22 @@
                         ?>
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @elseif($field['type'] == 'list')
-                         <?php
+                        <?php
 
-                        $literal = $user->getLiteral($field['short_sem_term']);
                         $val = '';
 
+                        $literal = $user->get($field['short_sem_term']);
                         if (!empty($literal)) {
-                            $val = $literal->getValue();
-                        } else {
-                            $literal = $user->get($field['short_sem_term']);
-
-                            if (!empty($literal)) {
-                                $val = $literal->getUri();
-                            }
+                            $val = $literal->getUri();
                         }
 
                         ?>
                         <select id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}" class="form-control">
                         <option></option>
                         @foreach($field['data'] as $option)
-                            <?php $option = (array)$option; ?>
+                            <?php $option = (array)$option;?>
+                            <?php var_dump($option); ?>
+                            <?php var_dump($val); ?>
                             @if ($option[$field['value_name']] == $val)
                                 <option value="{{ $option[$field['value_name']] }}" selected>{{ $option[$field['key_name']] }}</option>
                             @else

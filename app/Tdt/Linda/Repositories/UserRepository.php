@@ -21,7 +21,6 @@ class UserRepository
         $results = [];
 
         foreach ($cursor as $element) {
-
             unset($element['_id']);
 
             $expand = JsonLD::expand(json_encode($element));
@@ -48,7 +47,7 @@ class UserRepository
      */
     public function get($id)
     {
-        $uri = \URL::to('/users/' . $id);
+        $uri = \URL::to('/organizations/' . $id);
 
         $collection = $this->getMongoCollection();
 
@@ -57,7 +56,6 @@ class UserRepository
         );
 
         if ($cursor->hasNext()) {
-
             $jsonLd = $cursor->getNext();
             unset($jsonLd['_id']);
 
@@ -89,7 +87,7 @@ class UserRepository
         // Create a auto-generated subject URI
         $id = $this->getIncrementalId();
 
-        $uri = \URL::to('/users/' . $id);
+        $uri = \URL::to('/organizations/' . $id);
 
         $context = $this->getContext();
 
@@ -101,18 +99,16 @@ class UserRepository
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'foaf:Agent') {
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-
-                    if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                    if (filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
                         $graph->addResource($user, $field['sem_term'], trim($config[$field['var_name']]));
                     } else {
                         $graph->add($user, $field['sem_term'], trim($config[$field['var_name']]));
                     }
 
-                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
+                } elseif (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            if(filter_var($val, FILTER_VALIDATE_URL)) {
+                            if (filter_var($val, FILTER_VALIDATE_URL)) {
                                 $graph->addResource($$user, $field['sem_term'], $val);
                             } else {
                                 $graph->add($$user, $field['sem_term'], $val);
@@ -149,7 +145,7 @@ class UserRepository
      */
     public function update($id, $config)
     {
-        $uri = \URL::to('/users/' . $id);
+        $uri = \URL::to('/organizations/' . $id);
 
         // Find the graph in the collection
         $graph = $this->get($id . '#agent');
@@ -161,7 +157,6 @@ class UserRepository
         }
 
         foreach ($this->getFields() as $field) {
-
             $domain = $field['domain'];
 
             if ($domain == 'foaf:Agent') {
@@ -170,18 +165,15 @@ class UserRepository
                 $graph->delete($resource, $field['short_sem_term']);
 
                 if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
-
-                     if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
+                    if (filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
                         $graph->addResource($resource, $field['sem_term'], trim($config[$field['var_name']]));
                     } else {
                         $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
                     }
-
-                } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
+                } elseif (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
                     if (!empty($config[$field['var_name']])) {
                         foreach ($config[$field['var_name']] as $val) {
-                            if(filter_var($val, FILTER_VALIDATE_URL)) {
+                            if (filter_var($val, FILTER_VALIDATE_URL)) {
                                 $graph->addResource($resource, $field['sem_term'], $val);
                             } else {
                                 $graph->add($resource, $field['sem_term'], $val);
@@ -285,7 +277,7 @@ class UserRepository
     {
         $collection = $this->getMongoCollection();
 
-        $uri = \URL::to('/users/' . $id . '#agent');
+        $uri = \URL::to('/organizations/' . $id . '#agent');
 
         $collection->remove([
             '@id' => $uri
@@ -302,7 +294,7 @@ class UserRepository
                 'type' => 'string',
                 'view_name' => 'Name',
                 'required' => true,
-                'description' => 'The name of the person.',
+                'description' => 'The name of the organization.',
                 'domain' => 'foaf:Agent',
                 'single_value' => true,
             ],
@@ -313,7 +305,7 @@ class UserRepository
                 'required' => false,
                 'type' => 'string',
                 'view_name' => 'Email',
-                'description' => 'The email adress of the person.',
+                'description' => 'The email adress of the organization.',
                 'domain' => 'foaf:Agent',
                 'single_value' => true,
             ],
