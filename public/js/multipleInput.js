@@ -85,7 +85,11 @@
                var $input = $('<select id="' + name + '" class="form-control" type="text" />').on('change', function (event) {
 
                     var val = $(this).val();
-                    var name = $(this).text();
+                    var name = $(this).find(":selected").text();
+
+                    console.log(name);
+
+                    console.log($(this));
 
                     var $container = event.target.closest('div');
 
