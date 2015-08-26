@@ -108,7 +108,7 @@
                         ?>
                         <textarea class="form-control" rows=10 id="input_{{ $field['var_name'] }}" name="{{ $field['var_name'] }}">@if (isset($val)){{ $val }}@endif</textarea>
                         @elseif($field['type'] == 'list')
-                         <?php
+                        <?php
 
                         $literal = $datasetResource->getLiteral($field['short_sem_term']);
                         $val = $literal;
@@ -226,16 +226,31 @@
                     </div>
                 </div>
                 <div class="form-group distribution">
+                    <label for="input_title" class="col-sm-3 control-label">Title</label>
+                    <div class="col-sm-9">
+                        <?php
+                        $distTitle = $distribution->getLiteral('dc:title');
+
+                        if (!empty($distTitle)) {
+                            $distTitleVal = $distTitle->getValue();
+                        } else {
+                            $distTitleVal = null;
+                        }
+
+                        ?>
+                        <input name="distributionTitle" id="input_distributionTitle" class="form-control" value="{{ $distTitleVal }}">
+                    </div>
+
                     <label for="input_license" class="col-sm-3 control-label">License</label>
                     <div class="col-sm-9">
                         <?php
-                            $license = $distribution->getResource('dc:license');
+                        $license = $distribution->getResource('dc:license');
 
-                            if (!empty($license)) {
-                                $licenseVal = $license->getUri();
-                            } else {
-                                $licenseVal = null;
-                            }
+                        if (!empty($license)) {
+                            $licenseVal = $license->getUri();
+                        } else {
+                            $licenseVal = null;
+                        }
 
                         ?>
                         <select name="license" id="input_license" class="form-control">
@@ -251,30 +266,34 @@
                         </select>
                     </div>
 
-                    <label for="input_usecase{{$i}}" class="col-sm-3 control-label">Usecases</label>
+                    <label for="input_accessURL" class="col-sm-3 control-label">Access URL</label>
                     <div class="col-sm-9">
                         <?php
-                            $usecasesResources = $distribution->all('linda:useFor');
+                        $accessURL = $distribution->getResource('dcat:accessURL');
 
-                            $usecases = [];
+                        $accessURLVal = null;
 
-                            if (!empty($usecasesResources)) {
-                                foreach ($usecasesResources as $usecaseResource) {
-                                    $usecases[] = $usecaseResource->getUri();
-                                }
-                            }
+                        if (!empty($accessURL)) {
+                            $accessURLVal = $accessURL->getUri();
+                        }
+
                         ?>
-                        <select name="usecase{{$i}}" id="input_usecase{{$i}}" class="form-control multiSelect">
-                        <option></option>
-                        @foreach ($usecaseLinks as $usecaseLink)
-                            <?php $usecaseLink = (array)$usecaseLink; ?>
-                            @if (in_array($usecaseLink['url'], $usecases))
-                                <option value="{{ $usecaseLink['url'] }}" class="added">{{ $usecaseLink['name'] }}</option>
-                            @else
-                                <option value="{{ $usecaseLink['url'] }}" class="omitted">{{ $usecaseLink['name'] }}</option>
-                            @endif
-                        @endforeach
-                        </select>
+                        <input name="accessURL" id="input_accessURL" class="form-control" value="{{ $accessURLVal }}">
+                    </div>
+
+                    <label for="input_downloadURL" class="col-sm-3 control-label">Download URL</label>
+                    <div class="col-sm-9">
+                        <?php
+                        $downloadURL = $distribution->getResource('dcat:downloadURL');
+
+                        $downloadURLVal = null;
+
+                        if (!empty($downloadURL)) {
+                            $downloadURLVal = $downloadURL->getUri();
+                        }
+
+                        ?>
+                        <input name="downloadURL" id="input_downloadURL" class="form-control" value="{{ $downloadURLVal }}">
                     </div>
                 </div>
                 <?php $i++; ?>

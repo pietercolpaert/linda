@@ -21,7 +21,6 @@ class DatasetRepository
         $results = [];
 
         foreach ($cursor as $element) {
-
             unset($element['_id']);
 
             $expand = JsonLD::expand(json_encode($element));
@@ -62,7 +61,6 @@ class DatasetRepository
         );
 
         if ($cursor->hasNext()) {
-
             $jsonLd = $cursor->getNext();
             unset($jsonLd['_id']);
 
@@ -98,8 +96,28 @@ class DatasetRepository
 
         $context = $this->getContext();
 
-        // Add the dataset resource
+        $graph = $this->createGraph($uri, $config);
 
+        $serializer = new \EasyRdf_Serialiser_JsonLd();
+
+        $jsonld = $serializer->serialise($graph, 'jsonld');
+
+        $compact_document = (array)JsonLD::compact($jsonld, $context);
+
+        $collection = $this->getMongoCollection();
+        $collection->insert($compact_document);
+    }
+
+    /**
+     * Create a new graph
+     *
+     * @param $uri    string The URI of the dataset
+     * @param $config array  The configuration that makes up the new graph
+     *
+     * @return \EasyRdf_Graph
+     */
+    private function createGraph($uri, $config)
+    {
         $graph = new \EasyRdf_Graph();
         $dataset = $graph->resource($uri . '#dataset');
         $dataset->addType('dcat:Dataset');
@@ -119,12 +137,6 @@ class DatasetRepository
             }
         }
 
-        $serializer = new \EasyRdf_Serialiser_JsonLd();
-
-        $jsonld = $serializer->serialise($graph, 'jsonld');
-
-        $compact_document = (array)JsonLD::compact($jsonld, $context);
-
         // Add the datarecord resource
 
         $datarecord = $graph->resource($uri);
@@ -132,9 +144,9 @@ class DatasetRepository
 
         $created = time();
 
-        $datarecord->addLiteral('http://purl.org/dc/terms/issued', $created);
-        $datarecord->addLiteral('http://purl.org/dc/terms/modified', $created);
-        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/users/' . strtolower(str_replace(" ","",$config['user']))));
+        $datarecord->addLiteral('http://purl.org/dc/terms/issued', date('c', $created));
+        $datarecord->addLiteral('http://purl.org/dc/terms/modified', date('c', $created));
+        $datarecord->addResource('http://purl.org/dc/terms/creator', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
 
         foreach ($this->getFields() as $field) {
             if ($field['domain'] == 'dcat:CatalogRecord') {
@@ -163,7 +175,6 @@ class DatasetRepository
 
         // Add the distribution resource
         foreach ($config['distributions'] as $distribution) {
-
             $id = $this->getIncrementalId();
 
             $distr_uri = $uri . '#distribution' . $id;
@@ -171,28 +182,27 @@ class DatasetRepository
             $distributionResource = $graph->resource($distr_uri);
             $distributionResource->addType('dcat:Distribution');
 
-            if (!empty($distribution['license'])) {
-                $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
+            $urls = ['license', 'accessURL', 'downloadURL'];
+
+            foreach ($urls as $url) {
+                if (!empty($distribution[$url]) && filter_var($distribution[$url], FILTER_VALIDATE_URL)) {
+                    if ($url == 'license') {
+                        $graph->addResource($distributionResource, 'dct:' . $url, $distribution[$url]);
+                    } else {
+                        $graph->addResource($distributionResource, 'dcat:' . $url, $distribution[$url]);
+                    }
+                }
             }
 
-            if (!empty($distribution['usecases'])) {
-                foreach ($distribution['usecases'] as $usecase) {
-                    $graph->addResource($distributionResource, 'linda:useFor', $usecase);
-                }
+            if (!empty($distribution['distributionTitle'])) {
+                $graph->addLiteral($distributionResource, 'dct:title', $distribution['distributionTitle']);
             }
 
             // Add the distribution to the dataset
             $graph->addResource($dataset, 'dcat:distribution', $distr_uri);
         }
 
-        $serializer = new \EasyRdf_Serialiser_JsonLd();
-
-        $jsonld = $serializer->serialise($graph, 'jsonld');
-
-        $compact_document = (array)JsonLD::compact($jsonld, $context);
-
-        $collection = $this->getMongoCollection();
-        $collection->insert($compact_document);
+        return $graph;
     }
 
     /**
@@ -216,72 +226,25 @@ class DatasetRepository
             return null;
         }
 
+        $newGraph = $this->createGraph($uri, $config);
+
         // Add the contributor
-        $graph->addLiteral($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ","",$config['user']))));
+        $newGraph->addResource($uri, 'http://purl.org/dc/terms/contributor', \URL::to('/users/' . strtolower(str_replace(" ", "", $config['user']))));
 
-        foreach ($this->getFields() as $field) {
+        // Adjust the modifier timestamp
+        $newGraph->delete($uri, 'http://purl.org/dc/terms/issued');
 
-            $type = $field['domain'];
+        $newGraph->addLiteral($uri, 'http://purl.org/dc/terms/issued', $graph->getLiteral($uri, 'dc:issued')->getValue());
+        $newGraph->addLiteral($uri, 'http://purl.org/dc/terms/modified', date('c'));
 
-            if ($type == 'dcat:Dataset') {
-                $resource = $graph->resource($uri . "#dataset");
-            } else if ($type == 'dcat:CatalogRecord') {
-                $resource = $graph->resource($uri);
-            }
+        $newGraph->delete($uri, 'http://purl.org/dc/terms/creator');
 
-            $graph->delete($resource, $field['short_sem_term']);
+        $newGraph->addResource($uri, 'http://purl.org/dc/terms/creator', $graph->getResource($uri, 'dc:creator')->getUri());
 
-            if ($field['single_value'] && in_array($field['type'], ['string', 'text', 'list'])) {
+        $contributors = $graph->all($uri, 'dc:contributor');
 
-                if(filter_var(trim($config[$field['var_name']]), FILTER_VALIDATE_URL)) {
-                    $graph->addResource($resource, $field['sem_term'], trim($config[$field['var_name']]));
-                } else {
-                    $graph->add($resource, $field['sem_term'], trim($config[$field['var_name']]));
-                }
-
-            } else if (!$field['single_value'] && in_array($field['type'], ['string', 'list'])) {
-
-                if (!empty($config[$field['var_name']])) {
-                    foreach ($config[$field['var_name']] as $val) {
-                        if(filter_var($val, FILTER_VALIDATE_URL)) {
-                            $graph->addResource($resource, $field['sem_term'], $val);
-                        } else {
-                            $graph->add($resource, $field['sem_term'], $val);
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($graph->allOfType('dcat:Distribution') as $distribution) {
-
-            $resource = $graph->resource($uri . "#dataset");
-
-            $graph->deleteResource($resource, 'dcat:distribution', $distribution->getUri());
-        }
-
-        // Add the distribution resource
-        foreach ($config['distributions'] as $distribution) {
-
-            $id = $this->getIncrementalId();
-
-            $distr_uri = $uri . '#distribution' . $id;
-
-            $distributionResource = $graph->resource($distr_uri);
-            $distributionResource->addType('dcat:Distribution');
-
-            if (!empty($distribution['license'])) {
-                $graph->addResource($distributionResource, 'dct:license', $distribution['license']);
-            }
-
-            if (!empty($distribution['usecases'])) {
-                foreach ($distribution['usecases'] as $usecase) {
-                    $graph->addResource($distributionResource, 'linda:useFor', $usecase);
-                }
-            }
-
-            // Add the distribution to the dataset
-            $graph->addResource($uri . "#dataset", 'dcat:distribution', $distr_uri);
+        foreach ($contributors as $contributor) {
+            $newGraph->addResource($uri, 'http://purl.org/dc/terms/contributor', $contributor->getUri());
         }
 
         // Delete the json entry and replace it with the updated one
@@ -289,7 +252,7 @@ class DatasetRepository
 
         $serializer = new \EasyRdf_Serialiser_JsonLd();
 
-        $jsonld = $serializer->serialise($graph, 'jsonld');
+        $jsonld = $serializer->serialise($newGraph, 'jsonld');
 
         $compact_document = (array)JsonLD::compact($jsonld, $context);
 
@@ -426,65 +389,6 @@ class DatasetRepository
                 'view_name' => 'Description',
                 'description' => 'The description of the dataset.',
                 'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'comment',
-                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
-                'short_sem_term' => 'rdfs:comment',
-                'required' => false,
-                'type' => 'text',
-                'view_name' => 'Comment',
-                'description' => 'Additional comments on the dataset.',
-                'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'see_also',
-                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#seeAlso',
-                'short_sem_term' => 'rdfs:seeAlso',
-                'required' => false,
-                'type' => 'string',
-                'validation' => 'uri',
-                'view_name' => 'See Also',
-                'description' => 'Link to interesting related sources. (needs to be URIs)',
-                'domain' => 'dcat:Dataset',
-                'single_value' => false,
-            ],
-            [
-                'var_name' => 'score',
-                'sem_term' => 'http://semweb.mmlab.be/ns/linda#score',
-                'short_sem_term' => 'linda:score',
-                'required' => false,
-                'type' => 'list',
-                'values' => 'red,orange,green',
-                'key_name' => 'name',
-                'value_name' => 'value',
-                'view_name' => 'Score',
-                'description' => 'The score of a dataset.',
-                'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'recommendation',
-                'sem_term' => 'http://semweb.mmlab.be/ns/linda#recommendation',
-                'short_sem_term' => 'linda:recommendation',
-                'required' => false,
-                'type' => 'text',
-                'view_name' => 'Recommendation',
-                'description' => 'Small recommendations made by the researchers to make the dataset better.',
-                'domain' => 'dcat:Dataset',
-                'single_value' => true,
-            ],
-            [
-                'var_name' => 'record_comment',
-                'sem_term' => 'http://www.w3.org/2000/01/rdf-schema#comment',
-                'short_sem_term' => 'rdfs:comment',
-                'required' => false,
-                'type' => 'text',
-                'view_name' => 'Comment',
-                'description' => 'Comment for the data record (e.g. how was this meta-data assembled).',
-                'domain' => 'dcat:CatalogRecord',
                 'single_value' => true,
             ],
             [

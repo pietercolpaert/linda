@@ -21,22 +21,18 @@ class UserController extends \Illuminate\Routing\Controller
      */
     public function index()
     {
-        Auth::requirePermissions('users.manage');
-
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
 
         $users = $this->userRepo->getAll($limit, $offset);
 
         return \View::make('user.index')
-                ->with('title', 'List | Users')
+                ->with('title', 'List | Organisations')
                 ->with('users', $users);
     }
 
     public function show($id)
     {
-        Auth::requirePermissions('users.manage');
-
         $graph = $this->userRepo->get($id . '#agent');
 
         if (is_array($graph)) {
@@ -68,11 +64,10 @@ class UserController extends \Illuminate\Routing\Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -89,7 +84,7 @@ class UserController extends \Illuminate\Routing\Controller
         }
 
         return \View::make('user.create')
-                    ->with('title', 'Add a user')
+                    ->with('title', 'Add an organization')
                     ->with(['fields' => $adjusted_fields]);
     }
 
@@ -141,11 +136,10 @@ class UserController extends \Illuminate\Routing\Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -161,10 +155,10 @@ class UserController extends \Illuminate\Routing\Controller
             $adjusted_fields[] = $field;
         }
 
-        $uri = \URL::to('/users/' . $id);
+        $uri = \URL::to('/organizations/' . $id);
 
         return \View::make('user.edit')
-                ->with('title', 'Edit a user| Linda')
+                ->with('title', 'Edit an organization| Linda')
                 ->with('user', $user)
                 ->with('fields', $adjusted_fields)
                 ->with('uri', $uri);
@@ -206,6 +200,42 @@ class UserController extends \Illuminate\Routing\Controller
         Auth::requirePermissions('users.manage');
 
         $this->userRepo->delete($id);
+    }
+
+    /**
+     * Dereference a user
+     *
+     * @param $id integer The id of the user
+     *
+     * @return Response
+     */
+    public function derefUser($id = null)
+    {
+        if (empty($id)) {
+            return Redirect::to('/');
+        }
+
+        $userM = \Sentry::findUserById($id);
+
+        if (empty($userM)) {
+            \App::abort(404, 'The user could not be found.');
+        }
+
+        $graph = new \EasyRdf_Graph();
+
+        $userR = $graph->resource(\URL::to('/users/' . $id));
+
+        $userR->addLiteral('foaf:firstName', $userM['first_name']);
+        $userR->addLiteral('foaf:lastName', $userM['last_name']);
+        $userR->addLiteral('foaf:mbox', $userM['email']);
+
+        $serializer = new \EasyRdf_Serialiser_Turtle();
+
+        $turtle = $serializer->serialise($graph, 'turtle');
+
+        return \View::make('user.detail')
+                ->with('title', 'Detail | Linda')
+                ->with('turtle', $turtle);
     }
 
     private function getDocument($uri)

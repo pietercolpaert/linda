@@ -22,7 +22,6 @@ class AppController extends \Controller
      */
     public function index()
     {
-        Auth::requirePermissions('apps.manage');
 
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
@@ -36,7 +35,6 @@ class AppController extends \Controller
 
     public function show($id)
     {
-        Auth::requirePermissions('apps.manage');
 
         $graph = $this->appRepo->get($id . '#application');
 
@@ -69,11 +67,10 @@ class AppController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -149,11 +146,10 @@ class AppController extends \Controller
         // Expand values in the fields list such as external lists
         foreach ($fields as $field) {
             if ($field['type'] == 'list') {
-                if (substr($field['values'],0, 4) == 'http') {
+                if (substr($field['values'], 0, 4) == 'http') {
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];

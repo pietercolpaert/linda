@@ -4,7 +4,7 @@
     "name": "GovernmentOrganization"
     },
     {
-    "url" : "http://schema.org/NGO ",
+    "url" : "http://schema.org/NGO",
     "name": "NGO"
     },
     {
@@ -12,7 +12,7 @@
     "name": "LocalBusiness"
     },
     {
-    "url" : "http://schema.org/Corporation  ",
+    "url" : "http://schema.org/Corporation",
     "name": "Corporation"
     }
 ]

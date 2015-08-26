@@ -5,7 +5,7 @@
 <div class="container">
 <div class="row">
     <div class="col-sm-11">
-        <h1>Add a user</h1>
+        <h1>Add an organization</h1>
     </div>
 </div>
 <div class="row">
@@ -24,7 +24,7 @@
                 <label class="col-sm-2 control-label">
                 </label>
                 <div class="col-sm-10">
-                <h4>User required meta-data</h4>
+                <h4>Required meta-data</h4>
                 </div>
             </div>
             <div class="form-group">
@@ -52,7 +52,7 @@
                 <label class="col-sm-2 control-label">
                 </label>
                 <div class="col-sm-10">
-                <h4>User optional meta-data</h4>
+                <h4>Optional meta-data</h4>
                 </div>
             </div>
             <div class="form-group">

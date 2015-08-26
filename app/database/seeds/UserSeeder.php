@@ -34,10 +34,10 @@ class UserSeeder extends Seeder {
 
         // Create admin user and group
         Sentry::getUserProvider()->create(array(
-            'email'       => 'admin',
+            'email'       => 'admin@example.com',
             'password'    => 'admin',
             'first_name'  => 'John',
-            'last_name'   => 'Appleseed',
+            'last_name'   => 'Doe',
             'activated'   => 1,
         ));
 
@@ -56,7 +56,7 @@ class UserSeeder extends Seeder {
         $everyoneGroup = Sentry::getGroupProvider()->findByName('everyone');
         $everyoneUser->addGroup($everyoneGroup);
         $this->command->info('Succesfully added user "everyone".');
-        $adminUser  = Sentry::getUserProvider()->findByLogin('admin');
+        $adminUser  = Sentry::getUserProvider()->findByLogin('admin@example.com');
         $adminGroup = Sentry::getGroupProvider()->findByName('superadmin');
         $adminUser->addGroup($adminGroup);
         $this->command->info('Succesfully added user "admin".');

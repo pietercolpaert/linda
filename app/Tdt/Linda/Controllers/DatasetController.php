@@ -23,7 +23,6 @@ class DatasetController extends \Controller
      */
     public function index()
     {
-        Auth::requirePermissions('datasets.manage');
 
         $limit = \Input::get('limit', 100);
         $offset = \Input::get('offset', 0);
@@ -37,8 +36,6 @@ class DatasetController extends \Controller
 
     public function show($id)
     {
-        Auth::requirePermissions('datasets.manage');
-
         $graph = $this->datasetRepo->get($id);
 
         if (empty($graph)) {
@@ -74,7 +71,6 @@ class DatasetController extends \Controller
                     $data = json_decode($this->getDocument($field['values']));
                     $field['data'] = $data;
                 } else {
-
                     $values = explode(',', $field['values']);
 
                     $data = [];
@@ -109,7 +105,7 @@ class DatasetController extends \Controller
 
         // Add current user
         $user = \Sentry::getUser()->toArray();
-        $input['user'] = $user['email'];
+        $input['user'] = $user['id'];
 
         $rules = $this->datasetRepo->getRules();
 
@@ -170,14 +166,11 @@ class DatasetController extends \Controller
 
         $licenses = json_decode(file_get_contents('https://raw.githubusercontent.com/openknowledgebe/be-data-licenses/master/licenses.json'));
 
-        $usecaseLinks = json_decode($this->getDocument(\URL::to('lists/usecases')));
-
         return \View::make('dataset.edit')
                 ->with('title', 'Edit | Linda')
                 ->with('dataset', $dataset)
                 ->with('fields', $adjusted_fields)
                 ->with('licenses', $licenses)
-                ->with('usecaseLinks', $usecaseLinks)
                 ->with('uri', $uri);
     }
 
@@ -196,7 +189,7 @@ class DatasetController extends \Controller
 
         // Add current user
         $user = \Sentry::getUser()->toArray();
-        $input['user'] = $user['first_name'];
+        $input['user'] = $user['id'];
 
         $rules = $this->datasetRepo->getRules();
 

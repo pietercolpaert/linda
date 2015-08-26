@@ -4,11 +4,11 @@
 
     <div class='row header'>
         <div class="col-sm-7">
-            <h3>Manage your users</h3>
+            <h3>Manage your organizations</h3>
         </div>
         @if (Tdt\Linda\Auth\Auth::hasAccess('users.manage'))
         <div class="col-sm-5 text-right">
-            <a href='{{ URL::to('users/create') }}' class='btn btn-primary margin-left'
+            <a href='{{ URL::to('organizations/create') }}' class='btn btn-primary margin-left'
                 <i class='fa fa-plus'></i> Add
             </a>
         </div>
@@ -42,12 +42,12 @@
                             <div class='col-sm-4 text-right'>
                                 <div class='btn-group'>
                                     @if(Tdt\Linda\Auth\Auth::hasAccess('users.manage'))
-                                        <a href='{{ URL::to('users/' . $id .'/edit') }}' class='btn' title='Edit the dataset'>
+                                        <a href='{{ URL::to('organizations/' . $id .'/edit') }}' class='btn' title='Edit the dataset'>
                                             <i class='fa fa-pencil-square-o'></i> Edit
                                         </a>
                                     @endif
                                     @if(Tdt\Linda\Auth\Auth::hasAccess('users.manage'))
-                                        <a href='{{ URL::to('users/' . $id) }}' class='btn delete' title='Delete this dataset'>
+                                        <a href='{{ URL::to('organizations/' . $id) }}' class='btn delete' title='Delete this dataset'>
                                             <i class='fa fa-times icon-only'></i>
                                         </a>
                                     @endif

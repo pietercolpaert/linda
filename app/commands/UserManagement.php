@@ -43,11 +43,22 @@ class UserManagement extends Command {
         $delete = $this->option('delete');
 
         if (!empty($create)) {
+            $first_name = $this->ask('Enter the first name of the user:');
 
-            $name = $this->ask('Enter the name of the user:');
+            while (empty($first_name)) {
+                $first_name = $this->ask('Enter the first name of the user:');
+            }
 
-            while (empty($name)) {
-                $name = $this->ask('Enter the name of the user:');
+            $last_name = $this->ask('Enter the last name of the user:');
+
+            while (empty($last_name)) {
+                $last_name = $this->ask('Enter the last name of the user:');
+            }
+
+            $email = $this->ask('Enter the email of the user:');
+
+            while (empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+                $email = $this->ask('Enter the email of the user:');
             }
 
             $password = $this->secret('Enter the password for the user:');
@@ -66,21 +77,20 @@ class UserManagement extends Command {
 
             // Create 'everyone' user and group
             Sentry::getUserProvider()->create(array(
-                'email'       => $name,
+                'email'       => $email,
                 'password'    => $pwConfirm,
-                'first_name'  => $name,
-                'last_name'   => '',
+                'first_name'  => $first_name,
+                'last_name'   => $last_name,
                 'activated'   => 1,
             ));
 
-            $newUser  = Sentry::getUserProvider()->findByLogin($name);
+            $newUser  = Sentry::getUserProvider()->findByLogin($email);
             $adminGroup = Sentry::getGroupProvider()->findByName('superadmin');
             $newUser->addGroup($adminGroup);
 
-            $this->info('The user ' . $name . ' has been created and activated.');
+            $this->info('The user ' . $first_name  . ' ' . $last_name . ' has been created and activated.');
 
-        } else if (!empty($delete)) {
-
+        } elseif (!empty($delete)) {
             $name = $this->ask('Enter the name of the user you want to delete.');
 
             while (empty($name)) {
@@ -90,26 +100,20 @@ class UserManagement extends Command {
             $user = User::where(['email' => $name])->first();
 
             if (empty($user)) {
-
                 $this->error('No user with the name ' . $name . ' has been found.');
             } else {
-
                 if ($this->confirm('The user ' . $name . ' has been found, are you sure you want do delete? [yes|no]')) {
-
                     $user->delete();
-
                 } else {
                     $this->info('The user ' . $name . ' has not been removed.');
                 }
             }
 
         } else {
-
             // Get all of the users
             $users = User::all(['email'])->toArray();
 
             foreach ($users as $user) {
-
                 if ($user['email'] != 'everyone') {
                     $this->info($user['email']);
                 }
@@ -140,5 +144,4 @@ class UserManagement extends Command {
             array('delete', 'd', InputOption::VALUE_NONE, 'Delete an admin user.', null),
         );
     }
-
 }
